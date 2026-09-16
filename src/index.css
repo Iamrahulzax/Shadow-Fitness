@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-rank-accent: #00D4FF;
+    --color-rank-glow: rgba(0, 212, 255, 0.4);
+  }
+
+  body {
+    background-color: #07070B;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(91, 127, 255, 0.12), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 100% 50%, rgba(123, 92, 255, 0.06), transparent),
+      radial-gradient(ellipse 50% 30% at 0% 80%, rgba(0, 212, 255, 0.05), transparent);
+    background-attachment: fixed;
+    color: #E2E8F0;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Custom Cut-Corner Shapes inspired by System HUD */
+.clip-corner-tl {
+  clip-path: polygon(14px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 14px);
+}
+
+.clip-corner-br {
+  clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0% 100%);
+}
+
+.clip-corner-both {
+  clip-path: polygon(14px 0%, 100% 0%, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0% 100%, 0% 14px);
+}
+
+.clip-hex-btn {
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+}
+
+.clip-slanted {
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+}
+
+/* Glass & HUD Panels */
+.system-card {
+  background: rgba(14, 15, 23, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(91, 127, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.system-card-glow {
+  background: rgba(14, 15, 23, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.18), 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(0, 212, 255, 0.05);
+}
+
+.system-card-gold {
+  background: rgba(18, 16, 12, 0.88);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.2), 0 8px 32px rgba(0, 0, 0, 0.7);
+}
+
+/* Text glow utilities */
+.text-glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.6), 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.text-glow-violet {
+  text-shadow: 0 0 10px rgba(123, 92, 255, 0.6), 0 0 20px rgba(123, 92, 255, 0.3);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6), 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 10px rgba(255, 59, 92, 0.6), 0 0 20px rgba(255, 59, 92, 0.3);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(7, 7, 11, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(91, 127, 255, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.6);
+}
+
+/* Segmented HUD progress bar background */
+.hud-segments {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 8px,
+    rgba(0, 0, 0, 0.6) 8px,
+    rgba(0, 0, 0, 0.6) 11px
+  );
+}
+
+/* Subtle tech grid background */
+.bg-tech-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(91, 127, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(91, 127, 255, 0.04) 1px, transparent 1px);
+}
+
+/* Accessibility: Reduced glow & motion */
+body.reduced-glow * {
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
