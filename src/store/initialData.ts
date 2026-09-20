@@ -13,6 +13,10 @@ export const INITIAL_PLAYER: Player = {
   streakKeys: 2,
   missedDayDimmed: false,
   gold: 4850,
+  hunterId: 'SL-7709',
+  hunterClass: 'Shadow Monarch (Awakened)',
+  avatar: 'shadow-monarch',
+  bio: 'Every rep brings me closer to the Monarch of Shadows. Arise.',
   stats: {
     STR: 48, // Driven by workout volume
     VIT: 42, // Driven by sleep recovery

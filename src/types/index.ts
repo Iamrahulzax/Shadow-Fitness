@@ -22,6 +22,10 @@ export interface Player {
   missedDayDimmed: boolean;
   stats: PlayerStats;
   gold: number;
+  hunterId?: string;
+  hunterClass?: string;
+  avatar?: string;
+  bio?: string;
 }
 
 export interface ExerciseSet {

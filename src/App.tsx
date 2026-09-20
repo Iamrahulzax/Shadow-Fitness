@@ -11,6 +11,7 @@ import { AnalyticsView } from './views/AnalyticsView';
 import { LevelUpModal } from './components/modals/LevelUpModal';
 import { DungeonClearModal } from './components/modals/DungeonClearModal';
 import { DailyQuestArrivalModal } from './components/modals/DailyQuestArrivalModal';
+import { EditProfileModal } from './components/modals/EditProfileModal';
 import { PlayerStats } from './types';
 import { Plus, X, Zap } from 'lucide-react';
 
@@ -31,6 +32,7 @@ export const App: React.FC = () => {
         onToggleSound={actions.toggleSound}
         onToggleReducedGlow={actions.toggleReducedGlow}
         onOpenAPModal={() => setShowAPModal(true)}
+        onOpenEditProfile={actions.openEditProfile}
       />
 
       {/* Main App Content Viewport */}
@@ -74,6 +76,17 @@ export const App: React.FC = () => {
         <DailyQuestArrivalModal
           quests={state.quests}
           onAccept={actions.closeModal}
+        />
+      )}
+
+      {/* Hunter Profile & System Identity Editor */}
+      {state.activeModal === 'editProfile' && (
+        <EditProfileModal
+          player={state.player}
+          initialTab={state.editProfileTab}
+          onSave={actions.updatePlayerProfile}
+          onReset={actions.resetPlayerProfile}
+          onClose={actions.closeModal}
         />
       )}
 

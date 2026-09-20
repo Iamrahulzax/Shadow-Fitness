@@ -41,7 +41,8 @@ export interface AppState {
   quests: Quest[];
   achievements: Achievement[];
   workouts: WorkoutLog[];
-  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | null;
+  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | null;
+  editProfileTab?: 'identity' | 'rank' | 'avatar' | 'stats';
   lastLoot: LootItem | null;
   lastCompletedWorkout: WorkoutLog | null;
   levelUpInfo: LevelUpPayload | null;
@@ -140,6 +141,14 @@ function getInitialState(): AppState {
       const parsed = JSON.parse(saved);
       return {
         ...parsed,
+        player: {
+          ...INITIAL_PLAYER,
+          ...(parsed.player || {}),
+          stats: {
+            ...INITIAL_PLAYER.stats,
+            ...(parsed.player?.stats || {}),
+          },
+        },
         activeModal: 'dailyNotification', // Show daily quest notification on load
         lastLoot: null,
         levelUpInfo: null,
@@ -290,6 +299,72 @@ export const playerStoreActions = {
         ...globalState.player,
         title: newTitle,
       },
+    };
+    notify();
+  },
+
+  openEditProfile(tab?: 'identity' | 'rank' | 'avatar' | 'stats' | unknown) {
+    soundFx.playClick();
+    const resolvedTab = (typeof tab === 'string' && ['identity', 'rank', 'avatar', 'stats'].includes(tab))
+      ? (tab as 'identity' | 'rank' | 'avatar' | 'stats')
+      : 'identity';
+    globalState = {
+      ...globalState,
+      activeModal: 'editProfile',
+      editProfileTab: resolvedTab,
+    };
+    notify();
+  },
+
+  updateAvatar(avatarUrlOrData: string) {
+    soundFx.playStatUp();
+    globalState = {
+      ...globalState,
+      player: {
+        ...globalState.player,
+        avatar: avatarUrlOrData,
+      },
+    };
+    notify();
+  },
+
+  updatePlayerProfile(updates: Partial<Player>) {
+    soundFx.playStatUp();
+
+    let xpToNextLevel = updates.xpToNextLevel ?? globalState.player.xpToNextLevel;
+    if (updates.level && updates.level !== globalState.player.level && updates.xpToNextLevel === undefined) {
+      xpToNextLevel = getXpRequirement(updates.level);
+    }
+
+    let rank = updates.rank ?? globalState.player.rank;
+    if (updates.level && updates.rank === undefined) {
+      rank = calculateRank(updates.level);
+    }
+
+    globalState = {
+      ...globalState,
+      player: {
+        ...globalState.player,
+        ...updates,
+        rank,
+        xpToNextLevel,
+        stats: updates.stats
+          ? { ...globalState.player.stats, ...updates.stats }
+          : globalState.player.stats,
+      },
+      activeModal: null,
+    };
+    notify();
+  },
+
+  resetPlayerProfile() {
+    soundFx.playClick();
+    globalState = {
+      ...globalState,
+      player: {
+        ...INITIAL_PLAYER,
+      },
+      activeModal: null,
     };
     notify();
   },

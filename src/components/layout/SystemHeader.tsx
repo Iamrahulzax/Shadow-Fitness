@@ -1,6 +1,7 @@
 import React from 'react';
-import { Volume2, VolumeX, Eye, Sparkles, PlusCircle } from 'lucide-react';
+import { Volume2, VolumeX, Eye, Sparkles, PlusCircle, Edit3 } from 'lucide-react';
 import { Player } from '../../types';
+import { isPhotoAvatar } from '../../utils/image';
 
 interface SystemHeaderProps {
   player: Player;
@@ -9,6 +10,7 @@ interface SystemHeaderProps {
   onToggleSound: () => void;
   onToggleReducedGlow: () => void;
   onOpenAPModal?: () => void;
+  onOpenEditProfile?: () => void;
 }
 
 export const SystemHeader: React.FC<SystemHeaderProps> = ({
@@ -18,6 +20,7 @@ export const SystemHeader: React.FC<SystemHeaderProps> = ({
   onToggleSound,
   onToggleReducedGlow,
   onOpenAPModal,
+  onOpenEditProfile,
 }) => {
   const rankColors = {
     E: 'bg-slate-700 text-slate-300 border-slate-500',
@@ -35,18 +38,36 @@ export const SystemHeader: React.FC<SystemHeaderProps> = ({
     <header className="sticky top-0 z-40 w-full bg-[#07070B]/90 backdrop-blur-md border-b border-cyan-500/20 px-4 py-3">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
         {/* Left: Player Identity & Title */}
-        <div className="flex items-center gap-3">
-          {/* Rank Hex Badge */}
+        <div
+          onClick={onOpenEditProfile}
+          className="flex items-center gap-3 cursor-pointer group hover:opacity-95 transition-all"
+          title="Click to edit Hunter Profile"
+        >
+          {/* Rank Hex Badge or Profile Photo */}
           <div
-            className={`w-10 h-10 flex items-center justify-center font-hud text-lg font-black clip-hex-btn border ${rankColors} transition-all`}
+            className={`relative w-10 h-10 flex items-center justify-center font-hud text-lg font-black clip-hex-btn border ${rankColors} transition-all group-hover:scale-105 overflow-hidden shrink-0`}
           >
-            {player.rank}
+            {isPhotoAvatar(player.avatar) ? (
+              <>
+                <img
+                  src={player.avatar}
+                  alt={player.name}
+                  className="w-full h-full object-cover"
+                />
+                <span className="absolute bottom-0 right-0 px-1 text-[8px] font-hud bg-black/90 text-cyan-300 font-bold border-t border-l border-cyan-500/40">
+                  {player.rank}
+                </span>
+              </>
+            ) : (
+              player.rank
+            )}
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-hud text-sm md:text-base font-black text-white tracking-wide flex items-center gap-1.5">
-                {player.name}
+              <h1 className="font-hud text-sm md:text-base font-black text-white tracking-wide flex items-center gap-1.5 group-hover:text-cyan-300 transition-colors">
+                <span>{player.name}</span>
+                <Edit3 className="w-3.5 h-3.5 text-cyan-400/50 group-hover:text-cyan-400 transition-colors" />
               </h1>
               <span className="font-tech text-[10px] uppercase px-1.5 py-0.5 bg-violet-950/80 border border-violet-500/40 text-violet-300 rounded-sm">
                 {player.title}
