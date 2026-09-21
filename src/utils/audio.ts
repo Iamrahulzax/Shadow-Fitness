@@ -125,6 +125,21 @@ class SoundEngine {
     this.playTone(600, 'square', 0.08, 0.15, 0.12);
     this.playTone(900, 'sine', 0.3, 0.2, 0.18);
   }
+
+  // Respect / Mana Bless chime for leaderboard rivals
+  public playManaSent() {
+    this.playTone(659.25, 'sine', 0.08, 0.15, 0);      // E5
+    this.playTone(880, 'sine', 0.12, 0.2, 0.06);       // A5
+    this.playTone(1318.51, 'triangle', 0.25, 0.22, 0.12); // E6
+  }
+
+  // Leaderboard Rank climb fanfare
+  public playRankUp() {
+    this.playTone(440, 'triangle', 0.1, 0.2, 0);
+    this.playTone(554.37, 'triangle', 0.1, 0.22, 0.08);
+    this.playTone(659.25, 'triangle', 0.12, 0.25, 0.16);
+    this.playTone(880, 'sawtooth', 0.35, 0.28, 0.24);
+  }
 }
 
 export const soundFx = new SoundEngine();

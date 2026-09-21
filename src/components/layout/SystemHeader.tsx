@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Eye, Sparkles, PlusCircle, Edit3 } from 'lucide-react';
+import { Volume2, VolumeX, Eye, Sparkles, PlusCircle, Edit3, Trophy } from 'lucide-react';
 import { Player } from '../../types';
 import { isPhotoAvatar } from '../../utils/image';
 
@@ -11,6 +11,7 @@ interface SystemHeaderProps {
   onToggleReducedGlow: () => void;
   onOpenAPModal?: () => void;
   onOpenEditProfile?: () => void;
+  onOpenLeaderboard?: () => void;
 }
 
 export const SystemHeader: React.FC<SystemHeaderProps> = ({
@@ -21,6 +22,7 @@ export const SystemHeader: React.FC<SystemHeaderProps> = ({
   onToggleReducedGlow,
   onOpenAPModal,
   onOpenEditProfile,
+  onOpenLeaderboard,
 }) => {
   const rankColors = {
     E: 'bg-slate-700 text-slate-300 border-slate-500',
@@ -94,6 +96,19 @@ export const SystemHeader: React.FC<SystemHeaderProps> = ({
 
         {/* Right: Actions, Ability Points & Accessibility */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick Arena / Leaderboard Button */}
+          {onOpenLeaderboard && (
+            <button
+              onClick={onOpenLeaderboard}
+              className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-amber-950/50 hover:bg-amber-950/80 border border-amber-500/50 hover:border-amber-400 text-amber-300 font-hud text-xs font-bold rounded-sm shadow-[0_0_10px_rgba(245,158,11,0.2)] transition-all cursor-pointer"
+              title="Open Live Leaderboard"
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden xs:inline sm:inline">Ranks</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            </button>
+          )}
+
           {/* Ability Points Banner if available */}
           {player.unallocatedPoints > 0 && (
             <button

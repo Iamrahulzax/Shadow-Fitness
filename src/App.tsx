@@ -8,6 +8,7 @@ import { NutritionView } from './views/NutritionView';
 import { QuestsView } from './views/QuestsView';
 import { AchievementsView } from './views/AchievementsView';
 import { AnalyticsView } from './views/AnalyticsView';
+import { LeaderboardView } from './views/LeaderboardView';
 import { LevelUpModal } from './components/modals/LevelUpModal';
 import { DungeonClearModal } from './components/modals/DungeonClearModal';
 import { DailyQuestArrivalModal } from './components/modals/DailyQuestArrivalModal';
@@ -33,6 +34,7 @@ export const App: React.FC = () => {
         onToggleReducedGlow={actions.toggleReducedGlow}
         onOpenAPModal={() => setShowAPModal(true)}
         onOpenEditProfile={actions.openEditProfile}
+        onOpenLeaderboard={() => setCurrentTab('leaderboard')}
       />
 
       {/* Main App Content Viewport */}
@@ -44,6 +46,7 @@ export const App: React.FC = () => {
         {currentTab === 'nutrition' && <NutritionView />}
         {currentTab === 'quests' && <QuestsView />}
         {currentTab === 'army' && <AchievementsView />}
+        {currentTab === 'leaderboard' && <LeaderboardView />}
         {currentTab === 'analytics' && <AnalyticsView />}
       </main>
 

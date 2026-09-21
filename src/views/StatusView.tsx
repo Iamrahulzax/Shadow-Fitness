@@ -23,9 +23,10 @@ import { StatRadarChart } from '../components/common/StatRadarChart';
 import { StreakFlame } from '../components/common/StreakFlame';
 import { AVATAR_PRESETS } from '../components/modals/EditProfileModal';
 import { isPhotoAvatar, processImageFile } from '../utils/image';
+import { LeaderboardSection } from '../components/leaderboard/LeaderboardSection';
 
 interface StatusViewProps {
-  onNavigateTab: (tab: 'workout' | 'nutrition' | 'quests' | 'army' | 'analytics') => void;
+  onNavigateTab: (tab: 'workout' | 'nutrition' | 'quests' | 'army' | 'leaderboard' | 'analytics') => void;
 }
 
 export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
@@ -397,6 +398,9 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
           </button>
         </div>
       </div>
+
+      {/* Live Hunter Leaderboard Arena Section */}
+      <LeaderboardSection onOpenLeaderboard={() => onNavigateTab('leaderboard')} />
 
       {/* Active Daily Quests Preview */}
       <GlassCard variant="default" className="p-4">
