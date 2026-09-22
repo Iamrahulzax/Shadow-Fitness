@@ -13,6 +13,7 @@ import { LevelUpModal } from './components/modals/LevelUpModal';
 import { DungeonClearModal } from './components/modals/DungeonClearModal';
 import { DailyQuestArrivalModal } from './components/modals/DailyQuestArrivalModal';
 import { EditProfileModal } from './components/modals/EditProfileModal';
+import { AIRepTrackerModal } from './components/modals/AIRepTrackerModal';
 import { PlayerStats } from './types';
 import { Plus, X, Zap } from 'lucide-react';
 
@@ -90,6 +91,14 @@ export const App: React.FC = () => {
           onSave={actions.updatePlayerProfile}
           onReset={actions.resetPlayerProfile}
           onClose={actions.closeModal}
+        />
+      )}
+
+      {/* AI Push-up Rep Tracker Modal */}
+      {state.activeModal === 'aiRepTracker' && (
+        <AIRepTrackerModal
+          onClose={actions.closeModal}
+          defaultTarget={state.aiTrackerTarget || 'quest'}
         />
       )}
 

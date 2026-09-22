@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Sparkles,
   Zap,
+  Camera,
 } from 'lucide-react';
 import { Rank, WorkoutExercise, ExerciseSet } from '../types';
 import { usePlayerStore } from '../store/usePlayerStore';
@@ -184,22 +185,32 @@ export const WorkoutView: React.FC = () => {
             </p>
           </div>
 
-          <button
-            onClick={() => setIsLoggingActive(!isLoggingActive)}
-            className={`px-5 py-3 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-lg flex items-center justify-center gap-2 ${
-              isLoggingActive
-                ? 'bg-rose-900/80 border border-rose-500 text-rose-200 shadow-[0_0_15px_rgba(255,59,92,0.4)]'
-                : 'bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white shadow-[0_0_20px_rgba(123,92,255,0.4)]'
-            }`}
-          >
-            {isLoggingActive ? (
-              <>Collapse Active Raid</>
-            ) : (
-              <>
-                <Plus className="w-4 h-4" /> Enter New Gate Raid
-              </>
-            )}
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => actions.openAIRepTracker('workout')}
+              className="px-4 py-3 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400 text-cyan-200 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center gap-2 active:scale-95"
+            >
+              <Camera className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <span>AI Push-up Scanner</span>
+            </button>
+
+            <button
+              onClick={() => setIsLoggingActive(!isLoggingActive)}
+              className={`px-5 py-3 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-lg flex items-center justify-center gap-2 ${
+                isLoggingActive
+                  ? 'bg-rose-900/80 border border-rose-500 text-rose-200 shadow-[0_0_15px_rgba(255,59,92,0.4)]'
+                  : 'bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white shadow-[0_0_20px_rgba(123,92,255,0.4)]'
+              }`}
+            >
+              {isLoggingActive ? (
+                <>Collapse Active Raid</>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" /> Enter New Gate Raid
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </GlassCard>
 

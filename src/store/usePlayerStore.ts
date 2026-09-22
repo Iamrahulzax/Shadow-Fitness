@@ -41,7 +41,8 @@ export interface AppState {
   quests: Quest[];
   achievements: Achievement[];
   workouts: WorkoutLog[];
-  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | null;
+  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | 'aiRepTracker' | null;
+  aiTrackerTarget?: 'quest' | 'workout';
   editProfileTab?: 'identity' | 'rank' | 'avatar' | 'stats';
   lastLoot: LootItem | null;
   lastCompletedWorkout: WorkoutLog | null;
@@ -413,6 +414,111 @@ export const playerStoreActions = {
         };
       }
     }
+    notify();
+  },
+
+  openAIRepTracker(target: 'quest' | 'workout' = 'quest') {
+    soundFx.playClick();
+    globalState = {
+      ...globalState,
+      activeModal: 'aiRepTracker',
+      aiTrackerTarget: target,
+    };
+    notify();
+  },
+
+  commitAIReps(reps: number, target: 'quest' | 'workout' = 'quest') {
+    if (reps <= 0) {
+      playerStoreActions.closeModal();
+      return;
+    }
+
+    soundFx.playStatUp();
+
+    if (target === 'quest') {
+      const pushupQuest = globalState.quests.find((q) => q.id === 'q-sys-1');
+      if (pushupQuest) {
+        const nextCurrent = Math.min(pushupQuest.target, pushupQuest.current + reps);
+        const willComplete = nextCurrent >= pushupQuest.target && !pushupQuest.completed;
+
+        globalState = {
+          ...globalState,
+          activeModal: null,
+          quests: globalState.quests.map((q) =>
+            q.id === pushupQuest.id
+              ? {
+                  ...q,
+                  current: nextCurrent,
+                  completed: willComplete ? true : q.completed,
+                }
+              : q
+          ),
+          player: {
+            ...globalState.player,
+            stats: {
+              ...globalState.player.stats,
+              STR: globalState.player.stats.STR + Math.max(1, Math.floor(reps / 20)),
+            },
+          },
+        };
+
+        if (willComplete) {
+          soundFx.playQuestComplete();
+          playerStoreActions.addXP(pushupQuest.xpReward);
+        } else {
+          playerStoreActions.addXP(Math.round(reps * 1.5));
+        }
+      } else {
+        playerStoreActions.closeModal();
+      }
+    } else {
+      const estimatedVolume = reps * 45; // 45kg equivalent press
+      const xpGained = Math.round(150 + estimatedVolume / 40);
+
+      const aiWorkout: WorkoutLog = {
+        id: 'w-' + Date.now(),
+        date: 'Just now',
+        dungeonName: 'Solo Trial: AI Push-Up Crucible',
+        gateRank: reps >= 50 ? 'A' : reps >= 30 ? 'B' : 'C',
+        durationMinutes: Math.max(5, Math.round(reps * 0.1)),
+        totalVolumeKg: estimatedVolume,
+        xpGained,
+        exercises: [
+          {
+            id: 'ex-ai-pushup',
+            name: 'AI-Verified Push-ups',
+            category: 'Chest',
+            sets: [
+              {
+                setNumber: 1,
+                reps,
+                weightKg: 45,
+                completed: true,
+              },
+            ],
+          },
+        ],
+      };
+
+      soundFx.playDungeonClear();
+
+      globalState = {
+        ...globalState,
+        activeModal: null,
+        workouts: [aiWorkout, ...globalState.workouts],
+        player: {
+          ...globalState.player,
+          stats: {
+            ...globalState.player.stats,
+            STR: globalState.player.stats.STR + 1,
+            PER: globalState.player.stats.PER + 1,
+          },
+        },
+      };
+
+      playerStoreActions.addXP(xpGained);
+    }
+
     notify();
   },
 
