@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Eye, Sparkles, PlusCircle, Edit3, Trophy } from 'lucide-react';
+import { Volume2, VolumeX, Eye, Sparkles, PlusCircle, Edit3, Trophy, LogOut } from 'lucide-react';
 import { Player } from '../../types';
 import { isPhotoAvatar } from '../../utils/image';
 
@@ -12,6 +12,7 @@ interface SystemHeaderProps {
   onOpenAPModal?: () => void;
   onOpenEditProfile?: () => void;
   onOpenLeaderboard?: () => void;
+  onLogout?: () => void;
 }
 
 export const SystemHeader: React.FC<SystemHeaderProps> = ({
@@ -23,6 +24,7 @@ export const SystemHeader: React.FC<SystemHeaderProps> = ({
   onOpenAPModal,
   onOpenEditProfile,
   onOpenLeaderboard,
+  onLogout,
 }) => {
   const rankColors = {
     E: 'bg-slate-700 text-slate-300 border-slate-500',
@@ -146,6 +148,21 @@ export const SystemHeader: React.FC<SystemHeaderProps> = ({
           >
             <Sparkles className="w-4 h-4" />
           </button>
+
+          {/* Hunter Logout / Switch Account */}
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              aria-label="Log Out or Switch Hunter"
+              title="Log Out // Return to Hunter Portal"
+              className="flex items-center gap-1.5 p-2 rounded-sm bg-rose-950/40 hover:bg-rose-950/80 border border-rose-500/40 hover:border-rose-400 text-rose-300 transition-colors shadow-[0_0_8px_rgba(244,63,94,0.2)]"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="font-hud text-[10px] uppercase font-bold hidden md:inline">
+                Log Out
+              </span>
+            </button>
+          )}
         </div>
       </div>
     </header>

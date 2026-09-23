@@ -22,6 +22,7 @@ import {
   INITIAL_WORKOUTS,
 } from './initialData';
 import { soundFx } from '../utils/audio';
+import { HunterAccount } from '../types/auth';
 
 const STORAGE_KEY = 'shadow_fitness_save_v1';
 
@@ -776,6 +777,23 @@ export const playerStoreActions = {
       levelUpInfo: null,
       soundEnabled: true,
       reducedGlow: false,
+    };
+    notify();
+  },
+
+  syncWithHunterAccount(hunter: HunterAccount) {
+    globalState = {
+      ...globalState,
+      player: {
+        ...globalState.player,
+        name: hunter.hunterName,
+        title: hunter.title,
+        rank: hunter.rank,
+        hunterClass: hunter.hunterClass,
+        hunterId: hunter.id,
+        avatar: hunter.avatar,
+        stats: hunter.starterStats || globalState.player.stats,
+      },
     };
     notify();
   },

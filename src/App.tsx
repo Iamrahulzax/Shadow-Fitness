@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePlayerStore } from './store/usePlayerStore';
 import { SystemHeader } from './components/layout/SystemHeader';
 import { BottomNav, TabType } from './components/layout/BottomNav';
@@ -9,6 +9,10 @@ import { QuestsView } from './views/QuestsView';
 import { AchievementsView } from './views/AchievementsView';
 import { AnalyticsView } from './views/AnalyticsView';
 import { LeaderboardView } from './views/LeaderboardView';
+import { AuthView } from './views/AuthView';
+import { authService } from './services/authService';
+import { HunterAccount } from './types/auth';
+import { soundFx } from './utils/audio';
 import { LevelUpModal } from './components/modals/LevelUpModal';
 import { DungeonClearModal } from './components/modals/DungeonClearModal';
 import { DailyQuestArrivalModal } from './components/modals/DailyQuestArrivalModal';
@@ -21,6 +25,36 @@ export const App: React.FC = () => {
   const [state, actions] = usePlayerStore();
   const [currentTab, setCurrentTab] = useState<TabType>('status');
   const [showAPModal, setShowAPModal] = useState(false);
+  const [session, setSession] = useState(() => authService.getSession());
+
+  useEffect(() => {
+    if (session.isAuthenticated && session.currentUser) {
+      actions.syncWithHunterAccount(session.currentUser);
+    }
+  }, []);
+
+  const handleAuthSuccess = (hunter: HunterAccount) => {
+    actions.syncWithHunterAccount(hunter);
+    setSession({
+      currentUser: hunter,
+      isAuthenticated: true,
+      rememberMe: true,
+    });
+  };
+
+  const handleLogout = () => {
+    soundFx.playClick();
+    authService.logout();
+    setSession({
+      currentUser: null,
+      isAuthenticated: false,
+      rememberMe: true,
+    });
+  };
+
+  if (!session.isAuthenticated || !session.currentUser) {
+    return <AuthView onAuthSuccess={handleAuthSuccess} />;
+  }
 
   const pendingQuestsCount = state.quests.filter((q) => !q.completed).length;
 
@@ -36,6 +70,7 @@ export const App: React.FC = () => {
         onOpenAPModal={() => setShowAPModal(true)}
         onOpenEditProfile={actions.openEditProfile}
         onOpenLeaderboard={() => setCurrentTab('leaderboard')}
+        onLogout={handleLogout}
       />
 
       {/* Main App Content Viewport */}
