@@ -365,10 +365,20 @@ export const NutritionView: React.FC = () => {
 
         {/* Quick Food Presets Bar */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span className="font-tech text-xs uppercase tracking-wider text-slate-400">
               Quick Hunter Rations
             </span>
+            <div className="relative w-full sm:w-56">
+              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search rations..."
+                className="w-full pl-8 pr-2.5 py-1 bg-black/60 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-tech"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">

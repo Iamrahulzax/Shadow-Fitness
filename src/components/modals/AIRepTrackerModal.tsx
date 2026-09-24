@@ -53,6 +53,9 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
   // Biometrics & Counters
   const [reps, setReps] = useState<number>(0);
   const [currentStage, setCurrentStage] = useState<PushupStage>('UP');
+  const currentStageRef = useRef<PushupStage>('UP');
+  const demoProgressRef = useRef<number>(0);
+  const demoDirectionRef = useRef<number>(1);
   const [elbowAngle, setElbowAngle] = useState<number>(165);
   const [plankAngle, setPlankAngle] = useState<number>(175);
   const [formFeedback, setFormFeedback] = useState<string>('SYSTEM READY • ALIGN BODY');
@@ -127,6 +130,7 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
 
     // Stage progression logic: UP -> (TRANSITION/DOWN) -> UP
     setCurrentStage((prevStage) => {
+      let nextStage = prevStage;
       // If we were at bottom (DOWN) and now pushed back UP (elbow > 150)
       if (prevStage === 'DOWN' && analysis.activeElbowAngle >= 148) {
         setReps((prevReps) => {
@@ -146,21 +150,19 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
           }
           return nextReps;
         });
-        return 'UP';
+        nextStage = 'UP';
+      } else if (analysis.stage === 'DOWN') {
+        nextStage = 'DOWN';
       }
 
-      // If we are moving down and hit the bottom
-      if (analysis.stage === 'DOWN') {
-        return 'DOWN';
-      }
-
-      return prevStage;
+      currentStageRef.current = nextStage;
+      return nextStage;
     });
   }, [playRepBeep, speakCount]);
 
   // Draw skeleton on canvas
   const drawSkeleton = useCallback(
-    (landmarks: NormalizedLandmark[], width: number, height: number) => {
+    (landmarks: NormalizedLandmark[], width: number, height: number, angleDegrees: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
@@ -239,10 +241,10 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
         ctx.fillStyle = '#00FFFF';
         ctx.shadowColor = '#000000';
         ctx.shadowBlur = 4;
-        ctx.fillText(`${elbowAngle}°`, ex + 14, ey - 6);
+        ctx.fillText(`${angleDegrees}°`, ex + 14, ey - 6);
       }
     },
-    [elbowAngle]
+    []
   );
 
   // Real Camera Stream initialization
@@ -299,8 +301,6 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
   // Continuous Inference Loop
   useEffect(() => {
     let isRunning = true;
-    let demoProgress = 0;
-    let demoDirection = 1;
 
     async function runDetectionLoop() {
       const landmarker = await getPoseLandmarker();
@@ -318,23 +318,22 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
 
         // MODE 1: DEMO / SIMULATION MODE
         if (isDemoMode || !cameraActive || !landmarker) {
-          // Progress oscillates between 0 (top) and 1 (bottom) every ~2.5 seconds
-          demoProgress += 0.015 * demoDirection;
-          if (demoProgress >= 1) {
-            demoProgress = 1;
-            demoDirection = -1;
-          } else if (demoProgress <= 0) {
-            demoProgress = 0;
-            demoDirection = 1;
+          demoProgressRef.current += 0.015 * demoDirectionRef.current;
+          if (demoProgressRef.current >= 1) {
+            demoProgressRef.current = 1;
+            demoDirectionRef.current = -1;
+          } else if (demoProgressRef.current <= 0) {
+            demoProgressRef.current = 0;
+            demoDirectionRef.current = 1;
           }
 
-          const rawLandmarks = generateSyntheticPushupLandmarks(demoProgress);
+          const rawLandmarks = generateSyntheticPushupLandmarks(demoProgressRef.current);
           const smoothedLandmarks = smootherRef.current.smooth(rawLandmarks);
-          const analysis = analyzePushupPose(smoothedLandmarks, currentStage);
+          const analysis = analyzePushupPose(smoothedLandmarks, currentStageRef.current);
           handlePoseUpdate(analysis);
 
           if (canvas) {
-            drawSkeleton(smoothedLandmarks, canvas.width, canvas.height);
+            drawSkeleton(smoothedLandmarks, canvas.width, canvas.height, analysis.activeElbowAngle);
           }
 
           animationFrameRef.current = requestAnimationFrame(loop);
@@ -355,9 +354,9 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
             if (results.landmarks && results.landmarks.length > 0) {
               const raw = results.landmarks[0] as NormalizedLandmark[];
               const smoothed = smootherRef.current.smooth(raw);
-              const analysis = analyzePushupPose(smoothed, currentStage);
+              const analysis = analyzePushupPose(smoothed, currentStageRef.current);
               handlePoseUpdate(analysis);
-              drawSkeleton(smoothed, canvas.width, canvas.height);
+              drawSkeleton(smoothed, canvas.width, canvas.height, analysis.activeElbowAngle);
             } else {
               setFormFeedback('DETECTING HUNTER SKELETON...');
               const ctx = canvas.getContext('2d');
@@ -380,7 +379,7 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [cameraActive, isDemoMode, isPaused, currentStage, handlePoseUpdate, drawSkeleton]);
+  }, [cameraActive, isDemoMode, isPaused, handlePoseUpdate, drawSkeleton]);
 
   // Form score calculation
   const formScore = reps > 0 ? Math.min(100, Math.round((goodRepsCount / reps) * 100)) : 100;
@@ -508,9 +507,9 @@ export const AIRepTrackerModal: React.FC<AIRepTrackerModalProps> = ({
         {/* Realtime Telemetry Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3">
           <div className="p-2 bg-black/60 border border-slate-800 text-center">
-            <span className="font-tech text-[10px] text-slate-400 uppercase block">Active Target</span>
-            <span className="font-hud text-xs font-bold text-white truncate block">
-              {targetType === 'quest' ? '100 Push-ups' : 'Dungeon Raid'}
+            <span className="font-tech text-[10px] text-slate-400 uppercase block">Pose Phase</span>
+            <span className="font-hud text-xs font-bold text-cyan-300 truncate block">
+              {currentStage}
             </span>
           </div>
 

@@ -260,6 +260,20 @@ class AuthService {
     };
   }
 
+  public updateHunterAccount(updated: Partial<HunterAccount> & { id: string }): void {
+    const hunters = this.getStoredHunters();
+    const index = hunters.findIndex((h) => h.id === updated.id);
+    if (index !== -1) {
+      hunters[index] = { ...hunters[index], ...updated };
+      this.saveHunters(hunters);
+    }
+    const session = this.getSession();
+    if (session.currentUser && session.currentUser.id === updated.id) {
+      session.currentUser = { ...session.currentUser, ...updated };
+      this.saveSession(session);
+    }
+  }
+
   public getAllHunters(): HunterAccount[] {
     return this.getStoredHunters();
   }

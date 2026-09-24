@@ -23,6 +23,7 @@ import {
 } from './initialData';
 import { soundFx } from '../utils/audio';
 import { HunterAccount } from '../types/auth';
+import { authService } from '../services/authService';
 
 const STORAGE_KEY = 'shadow_fitness_save_v1';
 
@@ -180,7 +181,49 @@ function getInitialState(): AppState {
 let globalState: AppState = getInitialState();
 const listeners = new Set<(state: AppState) => void>();
 
+function checkAchievements(state: AppState): AppState {
+  let changed = false;
+  const updatedAchievements = state.achievements.map((ach) => {
+    if (ach.unlocked) return ach;
+    let shouldUnlock = false;
+
+    if (ach.id === 'ach-1') {
+      const totalVolume = state.workouts.reduce((sum, w) => sum + (w.totalVolumeKg || 0), 0);
+      if (totalVolume >= 50000) shouldUnlock = true;
+    }
+    if (ach.id === 'ach-2' && state.player.streakDays >= 10) {
+      shouldUnlock = true;
+    }
+    if (ach.id === 'ach-3' && state.steps.currentSteps >= 70000) {
+      shouldUnlock = true;
+    }
+    if (
+      ach.id === 'ach-4' &&
+      (state.player.rank === 'S' || state.player.rank === 'National') &&
+      state.workouts.length >= 50
+    ) {
+      shouldUnlock = true;
+    }
+    if (ach.id === 'ach-6' && state.player.level >= 30) {
+      shouldUnlock = true;
+    }
+
+    if (shouldUnlock) {
+      changed = true;
+      return {
+        ...ach,
+        unlocked: true,
+        unlockedDate: 'Just now',
+      };
+    }
+    return ach;
+  });
+
+  return changed ? { ...state, achievements: updatedAchievements } : state;
+}
+
 function notify() {
+  globalState = checkAchievements(globalState);
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(globalState));
   } catch {
@@ -356,6 +399,17 @@ export const playerStoreActions = {
       },
       activeModal: null,
     };
+
+    if (globalState.player.hunterId) {
+      authService.updateHunterAccount({
+        id: globalState.player.hunterId,
+        hunterName: updates.name ?? globalState.player.name,
+        title: updates.title ?? globalState.player.title,
+        rank,
+        avatar: updates.avatar ?? globalState.player.avatar,
+      });
+    }
+
     notify();
   },
 
@@ -578,10 +632,39 @@ export const playerStoreActions = {
       },
     };
 
-    // Auto-credit workout quest if available
-    const habitQuest = globalState.quests.find((q) => q.id === 'q-hab-2' || q.category === 'daily_habit');
-    if (habitQuest && !habitQuest.completed) {
-      // credit
+    // Auto-credit weekly raid quest if available
+    const raidQuest = globalState.quests.find((q) => q.category === 'weekly_raid');
+    if (raidQuest && !raidQuest.completed && calculatedVolume > 0) {
+      const updatedVolume = Math.min(raidQuest.target, raidQuest.current + calculatedVolume);
+      const willCompleteRaid = updatedVolume >= raidQuest.target;
+      globalState = {
+        ...globalState,
+        quests: globalState.quests.map((q) =>
+          q.id === raidQuest.id
+            ? {
+                ...q,
+                current: updatedVolume,
+                completed: willCompleteRaid ? true : q.completed,
+              }
+            : q
+        ),
+      };
+      if (willCompleteRaid) {
+        soundFx.playQuestComplete();
+        playerStoreActions.addXP(raidQuest.xpReward);
+        if (raidQuest.statReward) {
+          globalState = {
+            ...globalState,
+            player: {
+              ...globalState.player,
+              stats: {
+                ...globalState.player.stats,
+                [raidQuest.statReward]: globalState.player.stats[raidQuest.statReward] + 1,
+              },
+            },
+          };
+        }
+      }
     }
 
     playerStoreActions.addXP(xpGained);
@@ -640,10 +723,18 @@ export const playerStoreActions = {
       },
     };
 
-    if (hitGoal) {
-      const proteinQuest = globalState.quests.find((q) => q.id === 'q-hab-2');
-      if (proteinQuest && !proteinQuest.completed) {
+    const proteinQuest = globalState.quests.find((q) => q.id === 'q-hab-2');
+    if (proteinQuest && !proteinQuest.completed) {
+      const updatedCurrent = Math.min(newTotal, proteinQuest.target);
+      if (updatedCurrent >= proteinQuest.target || hitGoal) {
         playerStoreActions.toggleQuest(proteinQuest.id);
+      } else {
+        globalState = {
+          ...globalState,
+          quests: globalState.quests.map((q) =>
+            q.id === proteinQuest.id ? { ...q, current: updatedCurrent } : q
+          ),
+        };
       }
     }
     notify();
@@ -659,17 +750,35 @@ export const playerStoreActions = {
       time: timeStr,
     };
 
+    const newProtein = globalState.nutrition.proteinConsumed + item.protein;
+
     globalState = {
       ...globalState,
       nutrition: {
         ...globalState.nutrition,
         caloriesConsumed: globalState.nutrition.caloriesConsumed + item.calories,
-        proteinConsumed: globalState.nutrition.proteinConsumed + item.protein,
+        proteinConsumed: newProtein,
         carbsConsumed: globalState.nutrition.carbsConsumed + item.carbs,
         fatConsumed: globalState.nutrition.fatConsumed + item.fat,
         foodLogs: [newFood, ...globalState.nutrition.foodLogs],
       },
     };
+
+    const proteinQuest = globalState.quests.find((q) => q.id === 'q-hab-2');
+    if (proteinQuest && !proteinQuest.completed) {
+      const updatedCurrent = Math.min(newProtein, proteinQuest.target);
+      if (updatedCurrent >= proteinQuest.target || newProtein >= globalState.nutrition.proteinGoal) {
+        playerStoreActions.toggleQuest(proteinQuest.id);
+      } else {
+        globalState = {
+          ...globalState,
+          quests: globalState.quests.map((q) =>
+            q.id === proteinQuest.id ? { ...q, current: updatedCurrent } : q
+          ),
+        };
+      }
+    }
+
     notify();
   },
 
@@ -697,8 +806,17 @@ export const playerStoreActions = {
     };
 
     const sleepQuest = globalState.quests.find((q) => q.id === 'q-hab-3');
-    if (sleepQuest && !sleepQuest.completed && hours >= sleepQuest.target) {
-      playerStoreActions.toggleQuest(sleepQuest.id);
+    if (sleepQuest) {
+      if (!sleepQuest.completed && hours >= sleepQuest.target) {
+        playerStoreActions.toggleQuest(sleepQuest.id);
+      } else if (!sleepQuest.completed) {
+        globalState = {
+          ...globalState,
+          quests: globalState.quests.map((q) =>
+            q.id === sleepQuest.id ? { ...q, current: hours } : q
+          ),
+        };
+      }
     }
 
     notify();
@@ -706,9 +824,11 @@ export const playerStoreActions = {
 
   addSteps(stepsToAdd: number) {
     soundFx.playClick();
-    const newTotal = globalState.steps.currentSteps + stepsToAdd;
+    const oldTotal = globalState.steps.currentSteps;
+    const newTotal = oldTotal + stepsToAdd;
     const newDistance = Number((newTotal * 0.00075).toFixed(2));
     const newFloor = Math.min(100, Math.floor(newTotal / 600) + 1);
+    const agiGain = Math.floor(newTotal / 2000) - Math.floor(oldTotal / 2000);
 
     globalState = {
       ...globalState,
@@ -722,7 +842,7 @@ export const playerStoreActions = {
         ...globalState.player,
         stats: {
           ...globalState.player.stats,
-          AGI: globalState.player.stats.AGI + Math.floor(stepsToAdd / 2000),
+          AGI: agiGain > 0 ? globalState.player.stats.AGI + agiGain : globalState.player.stats.AGI,
         },
       },
     };
@@ -782,17 +902,20 @@ export const playerStoreActions = {
   },
 
   syncWithHunterAccount(hunter: HunterAccount) {
+    const isSameHunter = globalState.player.hunterId === hunter.id;
     globalState = {
       ...globalState,
       player: {
         ...globalState.player,
         name: hunter.hunterName,
-        title: hunter.title,
-        rank: hunter.rank,
+        title: isSameHunter ? (globalState.player.title || hunter.title) : hunter.title,
+        rank: isSameHunter ? (globalState.player.rank || hunter.rank) : hunter.rank,
         hunterClass: hunter.hunterClass,
         hunterId: hunter.id,
-        avatar: hunter.avatar,
-        stats: hunter.starterStats || globalState.player.stats,
+        avatar: isSameHunter ? (globalState.player.avatar || hunter.avatar) : hunter.avatar,
+        stats: isSameHunter && globalState.player.stats
+          ? globalState.player.stats
+          : (hunter.starterStats || globalState.player.stats),
       },
     };
     notify();

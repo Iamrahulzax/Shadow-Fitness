@@ -429,7 +429,7 @@ export function createPlayerLeaderboardEntry(
   steps: StepsData,
   achievements: Achievement[]
 ): HunterLeaderboardEntry {
-  const totalVolume = workouts.reduce((acc, w) => acc + (w.totalVolumeKg || 0), 0) || 8450;
+  const totalVolume = workouts.reduce((acc, w) => acc + (w.totalVolumeKg || 0), 0);
   const power = calculatePlayerPower(player, totalVolume);
   const unlockedShadows = achievements.filter((a) => a.unlocked).length;
 
@@ -451,7 +451,7 @@ export function createPlayerLeaderboardEntry(
     respectCount: 520,
     recentFeat: `${player.streakDays}-Day Gate Streak • Level ${player.level} Awakened`,
     bio: player.bio || 'Rising through the Hunter ranks one dungeon at a time.',
-    bestLift: `Compound Max Volume: ${Math.round(totalVolume * 0.25)}kg`,
+    bestLift: totalVolume > 0 ? `Compound Max Volume: ${Math.round(totalVolume * 0.25)}kg` : 'Calibration in progress',
     stats: player.stats,
     rankChange: 2,
     isPlayer: true,

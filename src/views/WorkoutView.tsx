@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Swords,
   Plus,
@@ -66,6 +66,25 @@ export const WorkoutView: React.FC = () => {
   // Rest Timer State
   const [timerSeconds, setTimerSeconds] = useState(90);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+    if (isTimerRunning && timerSeconds > 0) {
+      interval = setInterval(() => {
+        setTimerSeconds((prev) => {
+          if (prev <= 1) {
+            setIsTimerRunning(false);
+            soundFx.playLevelUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning, timerSeconds]);
 
   // Toggle set completed
   const handleToggleSet = (exerciseId: string, setIdx: number) => {
@@ -263,13 +282,34 @@ export const WorkoutView: React.FC = () => {
                 +{Math.round(200 + currentVolume / 30)} <span className="text-xs text-slate-400">XP</span>
               </span>
             </div>
-            <div className="col-span-2 sm:col-span-1 flex items-center justify-between sm:justify-end gap-2">
-              <span className="font-tech text-[11px] text-slate-400 uppercase">Rest: {timerSeconds}s</span>
+            <div className="col-span-2 sm:col-span-1 flex items-center justify-between sm:justify-end gap-1.5 flex-wrap">
+              <span className={`font-tech text-xs uppercase ${isTimerRunning ? 'text-cyan-300 font-bold' : 'text-slate-400'}`}>
+                Rest: {Math.floor(timerSeconds / 60)}:{String(timerSeconds % 60).padStart(2, '0')}
+              </span>
               <button
-                onClick={() => setTimerSeconds((prev) => (prev <= 30 ? 90 : prev - 30))}
-                className="px-2 py-1 bg-slate-800 border border-slate-700 text-xs font-hud text-slate-300"
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsTimerRunning(!isTimerRunning);
+                }}
+                className={`px-2 py-1 border text-xs font-hud transition-colors ${
+                  isTimerRunning
+                    ? 'bg-amber-950 border-amber-500 text-amber-300'
+                    : 'bg-cyan-950 border-cyan-500 text-cyan-300 hover:bg-cyan-900'
+                }`}
               >
-                Reset 90s
+                {isTimerRunning ? 'Pause' : 'Start'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsTimerRunning(false);
+                  setTimerSeconds(90);
+                }}
+                className="px-2 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-hud text-slate-300"
+              >
+                90s
               </button>
             </div>
           </div>

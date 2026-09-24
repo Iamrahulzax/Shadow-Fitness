@@ -31,7 +31,7 @@ export const App: React.FC = () => {
     if (session.isAuthenticated && session.currentUser) {
       actions.syncWithHunterAccount(session.currentUser);
     }
-  }, []);
+  }, [session.isAuthenticated, session.currentUser, actions]);
 
   const handleAuthSuccess = (hunter: HunterAccount) => {
     actions.syncWithHunterAccount(hunter);
