@@ -18,6 +18,7 @@ import { DungeonClearModal } from './components/modals/DungeonClearModal';
 import { DailyQuestArrivalModal } from './components/modals/DailyQuestArrivalModal';
 import { EditProfileModal } from './components/modals/EditProfileModal';
 import { AIRepTrackerModal } from './components/modals/AIRepTrackerModal';
+import { StreakCalendarModal } from './components/modals/StreakCalendarModal';
 import { PlayerStats } from './types';
 import { Plus, X, Zap } from 'lucide-react';
 
@@ -136,6 +137,12 @@ export const App: React.FC = () => {
           defaultTarget={state.aiTrackerTarget || 'quest'}
         />
       )}
+
+      {/* Goal Streak Calendar Modal */}
+      {state.activeModal === 'streakCalendar' && (
+        <StreakCalendarModal onClose={actions.closeModal} />
+      )}
+
 
       {/* Quick Ability Point Allocator Drawer/Modal */}
       {showAPModal && (

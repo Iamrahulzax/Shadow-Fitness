@@ -12,6 +12,7 @@ import {
   Skull,
   Trophy,
   Camera,
+  Calendar,
 } from 'lucide-react';
 import { usePlayerStore } from '../store/usePlayerStore';
 import { GlassCard } from '../components/common/GlassCard';
@@ -44,9 +45,21 @@ export const QuestsView: React.FC = () => {
               System Directives & Gate Mandates
             </h2>
           </div>
-          <span className="font-tech text-xs text-cyan-300">
-            {quests.filter((q) => q.completed).length} / {quests.length} Completed
-          </span>
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => actions.openStreakCalendar()}
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-500/40 text-amber-300 font-hud text-[11px] rounded-sm transition-all shadow-[0_0_8px_rgba(245,158,11,0.2)]"
+              title="View Goal Streak Calendar"
+            >
+              <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>{state.player.streakDays}-Day Streak</span>
+              <Calendar className="w-3 h-3 text-amber-400 ml-0.5" />
+            </button>
+            <span className="font-tech text-xs text-cyan-300">
+              {quests.filter((q) => q.completed).length} / {quests.length} Completed
+            </span>
+          </div>
+
         </div>
 
         <p className="font-sans text-xs text-slate-300 leading-relaxed">

@@ -131,3 +131,17 @@ export interface Achievement {
   titleReward?: string;
   badgeIcon: string;
 }
+
+export type DayGoalStatus = 'completed' | 'partial' | 'shielded' | 'rest' | 'missed';
+
+export interface DayGoalRecord {
+  date: string; // ISO date 'YYYY-MM-DD'
+  status: DayGoalStatus;
+  completedGoals: string[];
+  totalVolumeKg?: number;
+  xpEarned?: number;
+  workoutCompleted?: boolean;
+  workoutName?: string;
+  notes?: string;
+}
+

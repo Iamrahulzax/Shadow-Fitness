@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Shield, ShieldAlert, Sparkles, Key } from 'lucide-react';
+import { Flame, Shield, ShieldAlert, Sparkles, Key, Calendar } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 
 interface StreakFlameProps {
@@ -8,6 +8,7 @@ interface StreakFlameProps {
   streakKeys: number;
   missedDayDimmed: boolean;
   onUseKey?: () => void;
+  onOpenCalendar?: () => void;
 }
 
 export const StreakFlame: React.FC<StreakFlameProps> = ({
@@ -16,6 +17,7 @@ export const StreakFlame: React.FC<StreakFlameProps> = ({
   streakKeys,
   missedDayDimmed,
   onUseKey,
+  onOpenCalendar,
 }) => {
   // Determine flame aura tier
   let tierName = 'Novice Gate Aura';
@@ -54,10 +56,14 @@ export const StreakFlame: React.FC<StreakFlameProps> = ({
       {/* Background Radiance */}
       <div className={`absolute inset-0 bg-gradient-to-r ${auraBg} pointer-events-none`} />
 
-      <div className="relative flex items-center justify-between gap-4">
+      <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Left: Flame Icon and Streak Number */}
-        <div className="flex items-center gap-3.5">
-          <div className="relative flex items-center justify-center w-14 h-14 rounded-sm bg-black/50 border border-white/10">
+        <div
+          onClick={onOpenCalendar}
+          className={`flex items-center gap-3.5 ${onOpenCalendar ? 'cursor-pointer group' : ''}`}
+          title="Click to view Goal Streak Calendar"
+        >
+          <div className="relative flex items-center justify-center w-14 h-14 rounded-sm bg-black/50 border border-white/10 group-hover:border-cyan-400/60 transition-colors">
             <Flame
               className={`w-9 h-9 ${flameColor} ${!missedDayDimmed ? 'animate-pulse' : ''} transition-all`}
             />
@@ -68,42 +74,60 @@ export const StreakFlame: React.FC<StreakFlameProps> = ({
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-hud text-2xl font-black tracking-tight text-white">
+              <span className="font-hud text-2xl font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">
                 {streakDays}
               </span>
               <span className="font-tech text-xs uppercase tracking-widest text-slate-300">
                 Gate Clearances
               </span>
             </div>
-            <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="flex items-center gap-2 mt-0.5">
               <span className={`text-[10px] font-tech uppercase px-2 py-0.5 border rounded-sm ${badgeColor}`}>
                 {tierName}
               </span>
+              {onOpenCalendar && (
+                <span className="text-[10px] font-tech text-cyan-400 group-hover:underline flex items-center gap-1">
+                  <Calendar className="w-3 h-3" /> View Calendar
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right: Protection Key Info */}
-        <div className="flex flex-col items-end gap-1 text-right">
-          <div className="flex items-center gap-1.5 text-xs font-tech text-slate-300">
-            {streakProtected ? (
-              <span className="flex items-center gap-1 text-cyan-300">
-                <Shield className="w-3.5 h-3.5 text-cyan-400" /> Aegis Active
-              </span>
-            ) : streakKeys > 0 ? (
+        {/* Right: Protection Key Info & Action */}
+        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 sm:gap-1 text-right border-t sm:border-t-0 border-white/10 pt-2 sm:pt-0">
+          <div className="flex items-center gap-2">
+            {onOpenCalendar && (
               <button
-                onClick={onUseKey}
-                className="flex items-center gap-1 px-2 py-1 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-[11px] text-cyan-300 font-hud tracking-wide rounded-sm transition-all"
+                onClick={onOpenCalendar}
+                className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-500/50 hover:border-cyan-400 text-[11px] text-cyan-300 font-hud tracking-wide rounded-sm shadow-[0_0_10px_rgba(0,212,255,0.2)] active:scale-95 transition-all"
               >
-                <Key className="w-3 h-3 text-cyan-400" /> Equip Key ({streakKeys})
+                <Calendar className="w-3 h-3 text-cyan-400" />
+                <span>Streak Calendar</span>
               </button>
-            ) : (
-              <span className="flex items-center gap-1 text-slate-500 text-[11px]">
-                <ShieldAlert className="w-3.5 h-3.5 text-amber-500/70" /> Unprotected
-              </span>
             )}
+
+            <div className="flex items-center gap-1.5 text-xs font-tech text-slate-300">
+              {streakProtected ? (
+                <span className="flex items-center gap-1 text-cyan-300">
+                  <Shield className="w-3.5 h-3.5 text-cyan-400" /> Aegis Active
+                </span>
+              ) : streakKeys > 0 ? (
+                <button
+                  onClick={onUseKey}
+                  className="flex items-center gap-1 px-2 py-1 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-[11px] text-cyan-300 font-hud tracking-wide rounded-sm transition-all"
+                >
+                  <Key className="w-3 h-3 text-cyan-400" /> Equip Key ({streakKeys})
+                </button>
+              ) : (
+                <span className="flex items-center gap-1 text-slate-500 text-[11px]">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-500/70" /> Unprotected
+                </span>
+              )}
+            </div>
           </div>
-          <span className="text-[10px] text-slate-400 font-sans">
+
+          <span className="text-[10px] text-slate-400 font-sans hidden sm:inline">
             {missedDayDimmed
               ? 'The Gate remains open — return when ready'
               : streakProtected

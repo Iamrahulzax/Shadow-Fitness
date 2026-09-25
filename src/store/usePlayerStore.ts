@@ -11,6 +11,8 @@ import {
   WorkoutLog,
   LootItem,
   FoodItem,
+  DayGoalRecord,
+  DayGoalStatus,
 } from '../types';
 import {
   INITIAL_PLAYER,
@@ -20,10 +22,13 @@ import {
   INITIAL_QUESTS,
   INITIAL_ACHIEVEMENTS,
   INITIAL_WORKOUTS,
+  INITIAL_DAY_GOALS,
+  formatDateKey,
 } from './initialData';
 import { soundFx } from '../utils/audio';
 import { HunterAccount } from '../types/auth';
 import { authService } from '../services/authService';
+import { calculateStreakStats } from '../utils/streakCalendar';
 
 const STORAGE_KEY = 'shadow_fitness_save_v1';
 
@@ -43,7 +48,8 @@ export interface AppState {
   quests: Quest[];
   achievements: Achievement[];
   workouts: WorkoutLog[];
-  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | 'aiRepTracker' | null;
+  dayGoals: Record<string, DayGoalRecord>;
+  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | 'aiRepTracker' | 'streakCalendar' | null;
   aiTrackerTarget?: 'quest' | 'workout';
   editProfileTab?: 'identity' | 'rank' | 'avatar' | 'stats';
   lastLoot: LootItem | null;
@@ -129,6 +135,7 @@ function getInitialState(): AppState {
       quests: INITIAL_QUESTS,
       achievements: INITIAL_ACHIEVEMENTS,
       workouts: INITIAL_WORKOUTS,
+      dayGoals: INITIAL_DAY_GOALS,
       activeModal: 'dailyNotification',
       lastLoot: null,
       lastCompletedWorkout: null,
@@ -142,8 +149,13 @@ function getInitialState(): AppState {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
+      const dayGoals = parsed.dayGoals && Object.keys(parsed.dayGoals).length > 0
+        ? parsed.dayGoals
+        : INITIAL_DAY_GOALS;
+
       return {
         ...parsed,
+        dayGoals,
         player: {
           ...INITIAL_PLAYER,
           ...(parsed.player || {}),
@@ -169,6 +181,7 @@ function getInitialState(): AppState {
     quests: INITIAL_QUESTS,
     achievements: INITIAL_ACHIEVEMENTS,
     workouts: INITIAL_WORKOUTS,
+    dayGoals: INITIAL_DAY_GOALS,
     activeModal: 'dailyNotification',
     lastLoot: null,
     lastCompletedWorkout: null,
@@ -177,6 +190,53 @@ function getInitialState(): AppState {
     reducedGlow: false,
   };
 }
+
+export function syncTodayGoalRecord(state: AppState): Record<string, DayGoalRecord> {
+  const todayKey = formatDateKey(new Date());
+  const existing = state.dayGoals ? state.dayGoals[todayKey] : undefined;
+
+  const completedQuests = (state.quests || []).filter((q) => q.completed).map((q) => q.title);
+  const todaysWorkouts = (state.workouts || []).filter((w) => w.date === 'Today' || w.date === 'Just now');
+  const totalVolume = todaysWorkouts.reduce((sum, w) => sum + (w.totalVolumeKg || 0), 0);
+  const workoutDone = todaysWorkouts.length > 0;
+  const workoutName = todaysWorkouts[0]?.dungeonName;
+
+  const habitGoals: string[] = [];
+  if (state.nutrition?.waterConsumedMl >= 2000) habitGoals.push('Hydration Mandate (2,000ml+)');
+  if (state.nutrition?.proteinConsumed >= 120) habitGoals.push('Protein Elixir (120g+)');
+  if (state.sleep?.hours >= 7) habitGoals.push('Vitality Sleep Chamber (7h+)');
+
+  const allCompletedGoals = Array.from(new Set([
+    ...completedQuests,
+    ...(workoutDone && workoutName ? [workoutName] : []),
+    ...habitGoals,
+    ...(existing?.completedGoals || []),
+  ]));
+
+  let status: DayGoalStatus = existing?.status || 'partial';
+  if (allCompletedGoals.length >= 3 || workoutDone) {
+    status = 'completed';
+  } else if (allCompletedGoals.length > 0) {
+    status = existing?.status === 'completed' ? 'completed' : 'partial';
+  }
+
+  const updatedTodayRecord: DayGoalRecord = {
+    date: todayKey,
+    status,
+    completedGoals: allCompletedGoals,
+    totalVolumeKg: Math.max(totalVolume, existing?.totalVolumeKg || 0),
+    xpEarned: (existing?.xpEarned || 0) + (todaysWorkouts[0]?.xpGained || 0),
+    workoutCompleted: workoutDone || (existing?.workoutCompleted ?? false),
+    workoutName: workoutName || existing?.workoutName,
+    notes: existing?.notes || (workoutDone ? `Cleared dungeon raid: ${workoutName}` : 'Daily system mandates in progress.'),
+  };
+
+  return {
+    ...(state.dayGoals || {}),
+    [todayKey]: updatedTodayRecord,
+  };
+}
+
 
 let globalState: AppState = getInitialState();
 const listeners = new Set<(state: AppState) => void>();
@@ -469,8 +529,14 @@ export const playerStoreActions = {
         };
       }
     }
+    const updatedGoals = syncTodayGoalRecord(globalState);
+    globalState = {
+      ...globalState,
+      dayGoals: updatedGoals,
+    };
     notify();
   },
+
 
   openAIRepTracker(target: 'quest' | 'workout' = 'quest') {
     soundFx.playClick();
@@ -668,8 +734,14 @@ export const playerStoreActions = {
     }
 
     playerStoreActions.addXP(xpGained);
+    const updatedGoals = syncTodayGoalRecord(globalState);
+    globalState = {
+      ...globalState,
+      dayGoals: updatedGoals,
+    };
     notify();
   },
+
 
   addWater(amountMl: number) {
     soundFx.playClick();
@@ -880,6 +952,121 @@ export const playerStoreActions = {
     notify();
   },
 
+  openStreakCalendar() {
+    soundFx.playClick();
+    globalState = {
+      ...globalState,
+      activeModal: 'streakCalendar',
+    };
+    notify();
+  },
+
+  toggleDayGoal(dateKey: string, targetStatus?: DayGoalStatus) {
+    soundFx.playQuestComplete();
+    const existing = (globalState.dayGoals || {})[dateKey];
+    let nextStatus: DayGoalStatus = targetStatus || 'completed';
+
+    if (!targetStatus) {
+      if (!existing || existing.status === 'missed') {
+        nextStatus = 'completed';
+      } else if (existing.status === 'completed') {
+        nextStatus = 'rest';
+      } else if (existing.status === 'rest') {
+        nextStatus = 'missed';
+      } else {
+        nextStatus = 'completed';
+      }
+    }
+
+    const updatedRecord: DayGoalRecord = {
+      date: dateKey,
+      status: nextStatus,
+      completedGoals: existing?.completedGoals && existing.completedGoals.length > 0
+        ? existing.completedGoals
+        : nextStatus === 'completed'
+        ? ['Daily System Mandates Fulfilled', '100s Routine']
+        : nextStatus === 'rest'
+        ? ['Active Gate Recovery']
+        : [],
+      totalVolumeKg: existing?.totalVolumeKg ?? (nextStatus === 'completed' ? 5500 : 0),
+      xpEarned: existing?.xpEarned ?? (nextStatus === 'completed' ? 350 : 0),
+      workoutCompleted: existing?.workoutCompleted ?? (nextStatus === 'completed'),
+      workoutName: existing?.workoutName ?? (nextStatus === 'completed' ? 'Daily Gate Clearance' : undefined),
+      notes: existing?.notes || (nextStatus === 'completed' ? 'Goal verified and conquered.' : nextStatus === 'rest' ? 'Recovery chamber cycle.' : 'Gate incomplete.'),
+    };
+
+    const newDayGoals = {
+      ...(globalState.dayGoals || {}),
+      [dateKey]: updatedRecord,
+    };
+
+    const stats = calculateStreakStats(newDayGoals);
+
+    globalState = {
+      ...globalState,
+      dayGoals: newDayGoals,
+      player: {
+        ...globalState.player,
+        streakDays: stats.currentStreak,
+      },
+    };
+    notify();
+  },
+
+  updateDayGoal(record: DayGoalRecord) {
+    soundFx.playClick();
+    const newDayGoals = {
+      ...(globalState.dayGoals || {}),
+      [record.date]: record,
+    };
+    const stats = calculateStreakStats(newDayGoals);
+    globalState = {
+      ...globalState,
+      dayGoals: newDayGoals,
+      player: {
+        ...globalState.player,
+        streakDays: stats.currentStreak,
+      },
+    };
+    notify();
+  },
+
+  shieldDayWithKey(dateKey: string) {
+    if (globalState.player.streakKeys <= 0) return;
+    soundFx.playStatUp();
+    const existing = (globalState.dayGoals || {})[dateKey];
+    const updatedRecord: DayGoalRecord = {
+      date: dateKey,
+      status: 'shielded',
+      completedGoals: ['Aegis Key Shield Used'],
+      totalVolumeKg: existing?.totalVolumeKg || 0,
+      xpEarned: existing?.xpEarned || 0,
+      workoutCompleted: existing?.workoutCompleted || false,
+      workoutName: existing?.workoutName,
+      notes: 'Missed gate shielded by Hunter Aegis Key. Streak protected.',
+    };
+
+    const newDayGoals = {
+      ...(globalState.dayGoals || {}),
+      [dateKey]: updatedRecord,
+    };
+
+    const stats = calculateStreakStats(newDayGoals);
+
+    globalState = {
+      ...globalState,
+      dayGoals: newDayGoals,
+      player: {
+        ...globalState.player,
+        streakKeys: Math.max(0, globalState.player.streakKeys - 1),
+        streakDays: stats.currentStreak,
+        streakProtected: true,
+      },
+    };
+    notify();
+  },
+
+
   resetDemoData() {
     soundFx.playClick();
     localStorage.removeItem(STORAGE_KEY);
@@ -891,6 +1078,7 @@ export const playerStoreActions = {
       quests: INITIAL_QUESTS,
       achievements: INITIAL_ACHIEVEMENTS,
       workouts: INITIAL_WORKOUTS,
+      dayGoals: INITIAL_DAY_GOALS,
       activeModal: null,
       lastLoot: null,
       lastCompletedWorkout: null,
@@ -898,6 +1086,7 @@ export const playerStoreActions = {
       soundEnabled: true,
       reducedGlow: false,
     };
+
     notify();
   },
 

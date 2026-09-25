@@ -1,4 +1,4 @@
-import { Player, NutritionData, SleepData, StepsData, Quest, Achievement, WorkoutLog } from '../types';
+import { Player, NutritionData, SleepData, StepsData, Quest, Achievement, WorkoutLog, DayGoalRecord } from '../types';
 
 export const INITIAL_PLAYER: Player = {
   name: 'Hunter Jin',
@@ -340,3 +340,115 @@ export const INITIAL_WORKOUTS: WorkoutLog[] = [
     ]
   }
 ];
+
+// Helper to format Date to YYYY-MM-DD in local time
+export function formatDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+export function generateInitialDayGoals(): Record<string, DayGoalRecord> {
+  const records: Record<string, DayGoalRecord> = {};
+  const today = new Date();
+
+  // Pattern of the last 45 days matching Hunter Jin's 14-day unbroken active streak
+  // Days 0..13: unbroken streak (14 days)
+  // Day 14: rest
+  // Days 15..18: completed
+  // Day 19: shielded
+  // Days 20..25: completed
+  // Day 26: rest
+  // Days 27..32: completed
+  // Day 33: missed
+  // Days 34..42: completed
+
+  const workoutNames = [
+    'B-Rank Fortress: Iron Pectorals',
+    'C-Rank Cavern: Colossal Back Raid',
+    'A-Rank Gate: Quad Sovereign Annihilation',
+    'B-Rank Dungeon: Titan Shoulders & Traps',
+    'C-Rank Vault: Arm Hypertrophy Trial',
+    'S-Rank Trial: Full Body Shadow Extraction',
+    'B-Rank Crypt: Core & Oblique Fortress'
+  ];
+
+  for (let i = 0; i < 45; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = formatDateKey(d);
+
+    let status: DayGoalRecord['status'] = 'completed';
+    let goals: string[] = ['100 Push-ups', '100 Sit-ups', '100 Squats', '10km Run', 'Hydration Flask 2.5L', 'Protein Elixir 140g'];
+    let volume = 6500 + ((i * 370) % 4500);
+    let xp = 450 + ((i * 45) % 300);
+    let workout = workoutNames[i % workoutNames.length];
+    let notes = '';
+
+    if (i === 0) {
+      // Today: active clearance
+      status = 'completed';
+      goals = ['100 Sit-ups', '100 Squats', 'Hydration Flask 2.5L', 'Protein Elixir 140g', 'B-Rank Fortress: Iron Pectorals'];
+      volume = 7850;
+      xp = 460;
+      notes = 'Conquered B-Rank Iron Pectorals gate. Pushed heavy compound sets.';
+    } else if (i < 14) {
+      // Days 1 to 13: part of the 14-day streak
+      status = 'completed';
+      notes = `Gate Clearance Day ${14 - i}. All hunter mandates fulfilled.`;
+    } else if (i === 14) {
+      status = 'rest';
+      goals = ['Deep Cryo Recovery (8h)', 'Hydration Flask 3.0L'];
+      volume = 0;
+      xp = 180;
+      notes = 'Scheduled active rest day. Muscle regeneration cycle.';
+    } else if (i >= 15 && i <= 18) {
+      status = 'completed';
+      notes = 'Dungeon cleared with full volume quota.';
+    } else if (i === 19) {
+      status = 'shielded';
+      goals = ['Aegis Key Shield Used'];
+      volume = 0;
+      xp = 0;
+      notes = 'Missed daily gate averted through Aegis Key shield activation.';
+    } else if (i >= 20 && i <= 25) {
+      status = 'completed';
+      notes = 'Flawless execution of daily system quests.';
+    } else if (i === 26) {
+      status = 'rest';
+      goals = ['Slumber Chamber Restoration'];
+      volume = 0;
+      xp = 150;
+      notes = 'Deliberate deload and vitality regeneration.';
+    } else if (i >= 27 && i <= 32) {
+      status = 'completed';
+      notes = 'Monarch training cadence maintained.';
+    } else if (i === 33) {
+      status = 'missed';
+      goals = [];
+      volume = 0;
+      xp = 0;
+      notes = 'Breach occurred: gate timed out.';
+    } else {
+      status = i % 4 === 0 ? 'partial' : 'completed';
+      notes = status === 'completed' ? 'High volume raid conquered.' : 'Partial mandates completed.';
+    }
+
+    records[key] = {
+      date: key,
+      status,
+      completedGoals: goals,
+      totalVolumeKg: volume,
+      xpEarned: xp,
+      workoutCompleted: volume > 0,
+      workoutName: volume > 0 ? workout : undefined,
+      notes
+    };
+  }
+
+  return records;
+}
+
+export const INITIAL_DAY_GOALS: Record<string, DayGoalRecord> = generateInitialDayGoals();
+

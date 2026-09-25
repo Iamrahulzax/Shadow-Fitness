@@ -14,6 +14,7 @@ import {
   Edit3,
   User,
   Camera,
+  Calendar,
 } from 'lucide-react';
 import { PlayerStats, Rank } from '../types';
 import { usePlayerStore } from '../store/usePlayerStore';
@@ -21,6 +22,7 @@ import { GlassCard } from '../components/common/GlassCard';
 import { HUDBar } from '../components/common/HUDBar';
 import { StatRadarChart } from '../components/common/StatRadarChart';
 import { StreakFlame } from '../components/common/StreakFlame';
+import { StreakCalendar } from '../components/calendar/StreakCalendar';
 import { AVATAR_PRESETS } from '../components/modals/EditProfileModal';
 import { isPhotoAvatar, processImageFile } from '../utils/image';
 import { LeaderboardSection } from '../components/leaderboard/LeaderboardSection';
@@ -33,6 +35,7 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
   const [state, actions] = usePlayerStore();
   const { player, nutrition, sleep, steps } = state;
   const [hoveredStat, setHoveredStat] = useState<keyof PlayerStats | null>(null);
+  const [showCalendar, setShowCalendar] = useState(true);
 
   const statMetadata: Record<
     keyof PlayerStats,
@@ -316,7 +319,64 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
         streakKeys={player.streakKeys}
         missedDayDimmed={player.missedDayDimmed}
         onUseKey={() => actions.useStreakProtection()}
+        onOpenCalendar={() => actions.openStreakCalendar()}
       />
+
+      {/* Goal Streak & Daily Gate Clearance Calendar Section */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-cyan-400 shadow-[0_0_8px_#00D4FF]" />
+            <h3 className="font-hud text-xs uppercase tracking-widest text-slate-300 flex items-center gap-1.5 font-bold">
+              <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+              Goal Streak & Gate Clearance Calendar
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowCalendar(!showCalendar)}
+              className="px-2 py-0.5 font-tech text-xs text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/60 rounded-sm bg-cyan-950/40 transition-colors"
+            >
+              {showCalendar ? 'Collapse Calendar' : 'Expand Calendar'}
+            </button>
+            <button
+              onClick={() => actions.openStreakCalendar()}
+              className="px-2.5 py-0.5 font-hud text-[11px] font-bold uppercase tracking-wider text-cyan-300 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400/60 hover:border-cyan-400 rounded-sm shadow-[0_0_8px_rgba(0,212,255,0.2)] transition-all"
+            >
+              Full Screen
+            </button>
+          </div>
+        </div>
+
+        {showCalendar ? (
+          <StreakCalendar />
+        ) : (
+          <GlassCard
+            onClick={() => setShowCalendar(true)}
+            variant="cyan"
+            interactive
+            className="p-3.5 flex items-center justify-between cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-sm bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-hud text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">
+                  Goal Streak Cadence Hidden
+                </span>
+                <p className="font-tech text-[10px] text-slate-400">
+                  Tap to view 7-column calendar, completed daily mandates, and monthly clearance %
+                </p>
+              </div>
+            </div>
+            <span className="font-tech text-xs text-cyan-400 font-bold group-hover:translate-x-0.5 transition-transform">
+              Open Calendar →
+            </span>
+          </GlassCard>
+        )}
+      </div>
 
       {/* Quick Action Matrix for Rapid Logging */}
       <div className="space-y-3">
