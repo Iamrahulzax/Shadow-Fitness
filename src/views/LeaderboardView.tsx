@@ -20,7 +20,9 @@ import {
   RefreshCw,
   Target,
   Zap,
+  Swords,
 } from 'lucide-react';
+
 import { usePlayerStore } from '../store/usePlayerStore';
 import { GlassCard } from '../components/common/GlassCard';
 import {
@@ -45,7 +47,7 @@ const STORAGE_RESPECT_KEY = 'shadow_fitness_respected_hunters';
 const STORAGE_RIVAL_KEY = 'shadow_fitness_ghost_rival_id';
 
 export const LeaderboardView: React.FC = () => {
-  const [state] = usePlayerStore();
+  const [state, actions] = usePlayerStore();
   const { player, workouts, steps, achievements } = state;
 
   const [category, setCategory] = useState<LeaderboardCategory>('power');
@@ -754,6 +756,18 @@ export const LeaderboardView: React.FC = () => {
                   <Heart className={`w-3.5 h-3.5 ${hasRespected ? 'fill-rose-500 text-rose-500' : ''}`} />
                 </button>
 
+                {/* Live Push Contest Duel Button */}
+                {!isPlayer && (
+                  <button
+                    onClick={() => actions.openPushContest(hunter.id)}
+                    className="px-2 py-1 bg-rose-950/70 hover:bg-rose-900 border border-rose-500/50 hover:border-rose-400 font-hud text-[10px] text-rose-300 font-bold uppercase transition-all shadow-[0_0_8px_rgba(255,59,92,0.2)] flex items-center gap-1 active:scale-95"
+                    title="Challenge to Live Push-up Contest"
+                  >
+                    <Swords className="w-3 h-3 text-rose-400" />
+                    <span>Duel</span>
+                  </button>
+                )}
+
                 {/* Inspect Button */}
                 <button
                   onClick={() => setSelectedHunter(hunter)}
@@ -763,6 +777,7 @@ export const LeaderboardView: React.FC = () => {
                 </button>
               </div>
             </div>
+
           );
         })}
       </div>

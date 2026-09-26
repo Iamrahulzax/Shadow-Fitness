@@ -13,6 +13,8 @@ import {
   FoodItem,
   DayGoalRecord,
   DayGoalStatus,
+  PushContestStats,
+  PushContestResult,
 } from '../types';
 import {
   INITIAL_PLAYER,
@@ -29,6 +31,7 @@ import { soundFx } from '../utils/audio';
 import { HunterAccount } from '../types/auth';
 import { authService } from '../services/authService';
 import { calculateStreakStats } from '../utils/streakCalendar';
+import { INITIAL_CONTEST_STATS } from '../data/pushContestData';
 
 const STORAGE_KEY = 'shadow_fitness_save_v1';
 
@@ -49,8 +52,10 @@ export interface AppState {
   achievements: Achievement[];
   workouts: WorkoutLog[];
   dayGoals: Record<string, DayGoalRecord>;
-  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | 'aiRepTracker' | 'streakCalendar' | null;
+  pushContestStats: PushContestStats;
+  activeModal: 'levelUp' | 'dungeonClear' | 'dailyNotification' | 'editProfile' | 'aiRepTracker' | 'streakCalendar' | 'pushContestArena' | null;
   aiTrackerTarget?: 'quest' | 'workout';
+  activeContestRivalId?: string;
   editProfileTab?: 'identity' | 'rank' | 'avatar' | 'stats';
   lastLoot: LootItem | null;
   lastCompletedWorkout: WorkoutLog | null;
@@ -136,6 +141,7 @@ function getInitialState(): AppState {
       achievements: INITIAL_ACHIEVEMENTS,
       workouts: INITIAL_WORKOUTS,
       dayGoals: INITIAL_DAY_GOALS,
+      pushContestStats: INITIAL_CONTEST_STATS,
       activeModal: 'dailyNotification',
       lastLoot: null,
       lastCompletedWorkout: null,
@@ -156,6 +162,7 @@ function getInitialState(): AppState {
       return {
         ...parsed,
         dayGoals,
+        pushContestStats: parsed.pushContestStats || INITIAL_CONTEST_STATS,
         player: {
           ...INITIAL_PLAYER,
           ...(parsed.player || {}),
@@ -182,6 +189,7 @@ function getInitialState(): AppState {
     achievements: INITIAL_ACHIEVEMENTS,
     workouts: INITIAL_WORKOUTS,
     dayGoals: INITIAL_DAY_GOALS,
+    pushContestStats: INITIAL_CONTEST_STATS,
     activeModal: 'dailyNotification',
     lastLoot: null,
     lastCompletedWorkout: null,
@@ -190,6 +198,7 @@ function getInitialState(): AppState {
     reducedGlow: false,
   };
 }
+
 
 export function syncTodayGoalRecord(state: AppState): Record<string, DayGoalRecord> {
   const todayKey = formatDateKey(new Date());
@@ -1067,6 +1076,78 @@ export const playerStoreActions = {
   },
 
 
+  openPushContest(rivalId?: string) {
+    soundFx.playClick();
+    globalState = {
+      ...globalState,
+      activeModal: 'pushContestArena',
+      activeContestRivalId: rivalId,
+    };
+    notify();
+  },
+
+  recordPushContestMatch(result: PushContestResult) {
+    const isWin = result.isWin;
+    const currentStats = globalState.pushContestStats || INITIAL_CONTEST_STATS;
+
+    const newWins = isWin ? currentStats.wins + 1 : currentStats.wins;
+    const newLosses = isWin ? currentStats.losses : currentStats.losses + 1;
+    const newStreak = isWin ? currentStats.currentWinStreak + 1 : 0;
+    const newTotalReps = currentStats.totalContestReps + result.playerReps;
+    const newHighest = Math.max(currentStats.highestRepScore, result.playerReps);
+    const updatedMatches = [result, ...(currentStats.recentMatches || []).slice(0, 19)];
+
+    if (isWin) {
+      soundFx.playDungeonClear();
+      playerStoreActions.addXP(result.xpEarned);
+    } else {
+      soundFx.playClick();
+      if (result.xpEarned > 0) {
+        playerStoreActions.addXP(result.xpEarned);
+      }
+    }
+
+    // Auto-credit reps to daily pushup quest (q-sys-1)
+    const pushupQuest = globalState.quests.find((q) => q.id === 'q-sys-1');
+    let updatedQuests = globalState.quests;
+    if (pushupQuest && result.playerReps > 0) {
+      const nextCurrent = Math.min(pushupQuest.target, pushupQuest.current + result.playerReps);
+      const willComplete = nextCurrent >= pushupQuest.target;
+      updatedQuests = globalState.quests.map((q) =>
+        q.id === 'q-sys-1' ? { ...q, current: nextCurrent, completed: willComplete || q.completed } : q
+      );
+    }
+
+    globalState = {
+      ...globalState,
+      quests: updatedQuests,
+      pushContestStats: {
+        wins: newWins,
+        losses: newLosses,
+        totalContestReps: newTotalReps,
+        highestRepScore: newHighest,
+        currentWinStreak: newStreak,
+        recentMatches: updatedMatches,
+      },
+      player: {
+        ...globalState.player,
+        gold: globalState.player.gold + result.goldEarned,
+        stats: {
+          ...globalState.player.stats,
+          STR: isWin ? globalState.player.stats.STR + 1 : globalState.player.stats.STR,
+        },
+      },
+    };
+
+    const updatedGoals = syncTodayGoalRecord(globalState);
+    globalState = {
+      ...globalState,
+      dayGoals: updatedGoals,
+    };
+
+    notify();
+  },
+
   resetDemoData() {
     soundFx.playClick();
     localStorage.removeItem(STORAGE_KEY);
@@ -1079,6 +1160,7 @@ export const playerStoreActions = {
       achievements: INITIAL_ACHIEVEMENTS,
       workouts: INITIAL_WORKOUTS,
       dayGoals: INITIAL_DAY_GOALS,
+      pushContestStats: INITIAL_CONTEST_STATS,
       activeModal: null,
       lastLoot: null,
       lastCompletedWorkout: null,
@@ -1086,6 +1168,7 @@ export const playerStoreActions = {
       soundEnabled: true,
       reducedGlow: false,
     };
+
 
     notify();
   },

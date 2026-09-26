@@ -26,6 +26,7 @@ import { StreakCalendar } from '../components/calendar/StreakCalendar';
 import { AVATAR_PRESETS } from '../components/modals/EditProfileModal';
 import { isPhotoAvatar, processImageFile } from '../utils/image';
 import { LeaderboardSection } from '../components/leaderboard/LeaderboardSection';
+import { PushContestSection } from '../components/arena/PushContestSection';
 
 interface StatusViewProps {
   onNavigateTab: (tab: 'workout' | 'nutrition' | 'quests' | 'army' | 'leaderboard' | 'analytics') => void;
@@ -459,8 +460,12 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
         </div>
       </div>
 
+      {/* Live Push-Up Contest Arena Section */}
+      <PushContestSection onOpenArena={(rivalId) => actions.openPushContest(rivalId)} />
+
       {/* Live Hunter Leaderboard Arena Section */}
       <LeaderboardSection onOpenLeaderboard={() => onNavigateTab('leaderboard')} />
+
 
       {/* Active Daily Quests Preview */}
       <GlassCard variant="default" className="p-4">

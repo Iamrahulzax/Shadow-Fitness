@@ -19,6 +19,7 @@ import { DailyQuestArrivalModal } from './components/modals/DailyQuestArrivalMod
 import { EditProfileModal } from './components/modals/EditProfileModal';
 import { AIRepTrackerModal } from './components/modals/AIRepTrackerModal';
 import { StreakCalendarModal } from './components/modals/StreakCalendarModal';
+import { PushContestArenaModal } from './components/arena/PushContestArenaModal';
 import { PlayerStats } from './types';
 import { Plus, X, Zap } from 'lucide-react';
 
@@ -142,6 +143,15 @@ export const App: React.FC = () => {
       {state.activeModal === 'streakCalendar' && (
         <StreakCalendarModal onClose={actions.closeModal} />
       )}
+
+      {/* Live Push-Up Contest Arena Modal */}
+      {state.activeModal === 'pushContestArena' && (
+        <PushContestArenaModal
+          onClose={actions.closeModal}
+          initialRivalId={state.activeContestRivalId}
+        />
+      )}
+
 
 
       {/* Quick Ability Point Allocator Drawer/Modal */}

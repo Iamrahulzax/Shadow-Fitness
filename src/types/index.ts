@@ -145,3 +145,43 @@ export interface DayGoalRecord {
   notes?: string;
 }
 
+export type ContestDifficulty = 'rookie' | 'elite' | 'monarch' | 'god';
+
+export interface PushContestRival {
+  id: string;
+  name: string;
+  title: string;
+  rank: Rank;
+  avatar: string;
+  guild: string;
+  baseRepsPerMin: number;
+  difficulty: ContestDifficulty;
+  bio: string;
+  colorScheme: string;
+}
+
+export type ContestMode = '60s' | '30s' | 'first50';
+
+export interface PushContestResult {
+  matchId: string;
+  timestamp: number;
+  rivalName: string;
+  rivalRank: Rank;
+  playerReps: number;
+  rivalReps: number;
+  isWin: boolean;
+  mode: ContestMode;
+  xpEarned: number;
+  goldEarned: number;
+}
+
+export interface PushContestStats {
+  wins: number;
+  losses: number;
+  totalContestReps: number;
+  highestRepScore: number;
+  currentWinStreak: number;
+  recentMatches: PushContestResult[];
+}
+
+
