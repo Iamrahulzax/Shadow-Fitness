@@ -63,6 +63,11 @@ export const WorkoutView: React.FC = () => {
     },
   ]);
 
+  // Custom exercise & category filter state
+  const [customExName, setCustomExName] = useState('');
+  const [customExCategory, setCustomExCategory] = useState<WorkoutExercise['category']>('Chest');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('All');
+
   // Rest Timer State
   const [timerSeconds, setTimerSeconds] = useState(90);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -237,7 +242,7 @@ export const WorkoutView: React.FC = () => {
       {isLoggingActive && (
         <GlassCard variant="cyan" cornerCut="both" className="p-5 border-cyan-400/50 space-y-6">
           {/* Dungeon Name & Gate Rank Config */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b border-cyan-500/20 pb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 border-b border-cyan-500/20 pb-4">
             <div className="sm:col-span-2">
               <label className="block font-tech text-xs text-slate-300 uppercase mb-1">
                 Dungeon Gate Designation
@@ -265,6 +270,20 @@ export const WorkoutView: React.FC = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label className="block font-tech text-xs text-slate-300 uppercase mb-1">
+                Duration (Min)
+              </label>
+              <input
+                type="number"
+                min="5"
+                max="240"
+                value={duration}
+                onChange={(e) => setDuration(Math.max(5, parseInt(e.target.value, 10) || 5))}
+                className="w-full bg-black/60 border border-cyan-500/30 px-3 py-2 text-sm font-hud text-cyan-300 focus:outline-none focus:border-cyan-400"
+              />
             </div>
           </div>
 
@@ -412,23 +431,90 @@ export const WorkoutView: React.FC = () => {
             ))}
           </div>
 
-          {/* Quick Add Presets Bar */}
-          <div className="space-y-2">
-            <span className="font-tech text-xs uppercase tracking-wider text-slate-400 block">
-              Spawn Target Exercise
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {PRESET_EXERCISES.slice(0, 6).map((preset) => (
+          {/* Exercise Arsenal & Presets Bar */}
+          <div className="space-y-3 p-3 bg-black/50 border border-slate-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span className="font-tech text-xs uppercase tracking-wider text-slate-300 font-bold block">
+                Spawn Target Exercise
+              </span>
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap gap-1">
+                {(['All', 'Chest', 'Legs', 'Back', 'Shoulders', 'Arms', 'Core'] as const).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategoryFilter(cat)}
+                    className={`px-2 py-0.5 text-[10px] font-tech uppercase transition-colors ${
+                      selectedCategoryFilter === cat
+                        ? 'bg-cyan-950 border border-cyan-400 text-cyan-300 font-bold'
+                        : 'bg-black/60 border border-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Presets List */}
+            <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+              {PRESET_EXERCISES.filter(
+                (p) => selectedCategoryFilter === 'All' || p.category === selectedCategoryFilter
+              ).map((preset) => (
                 <button
                   key={preset.name}
+                  type="button"
                   onClick={() => handleAddExercise(preset.name, preset.category)}
-                  className="px-2.5 py-1 bg-black/60 hover:bg-cyan-950 border border-slate-700 hover:border-cyan-500/50 font-tech text-xs text-slate-300 hover:text-cyan-300 transition-colors"
+                  className="px-2.5 py-1 bg-black/60 hover:bg-cyan-950 border border-slate-700 hover:border-cyan-500/50 font-tech text-xs text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1"
                 >
-                  + {preset.name}
+                  <Plus className="w-3 h-3 text-cyan-400" />
+                  <span>{preset.name}</span>
                 </button>
               ))}
             </div>
+
+            {/* Custom Exercise Creator */}
+            <div className="pt-2 border-t border-slate-800/80 flex flex-col sm:flex-row items-center gap-2">
+              <input
+                type="text"
+                placeholder="Or create custom exercise (e.g. Incline DB Flyes)..."
+                value={customExName}
+                onChange={(e) => setCustomExName(e.target.value)}
+                className="flex-1 w-full bg-black/70 border border-slate-700 px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-tech"
+              />
+              <select
+                value={customExCategory}
+                onChange={(e) => setCustomExCategory(e.target.value as WorkoutExercise['category'])}
+                className="bg-black/70 border border-slate-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400 font-tech uppercase"
+              >
+                {(['Chest', 'Legs', 'Back', 'Shoulders', 'Arms', 'Core'] as const).map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => {
+                  if (customExName.trim()) {
+                    handleAddExercise(customExName.trim(), customExCategory);
+                    setCustomExName('');
+                  }
+                }}
+                disabled={!customExName.trim()}
+                className="w-full sm:w-auto px-3 py-1.5 bg-cyan-950 hover:bg-cyan-900 border border-cyan-400 text-cyan-300 font-hud text-xs font-bold uppercase tracking-wider disabled:opacity-40 transition-colors"
+              >
+                + Add Custom
+              </button>
+            </div>
           </div>
+
+          {/* Volume Helper Warning if 0 */}
+          {currentVolume === 0 && (
+            <div className="p-2.5 bg-amber-950/30 border border-amber-500/40 text-amber-300 text-xs font-tech flex items-center gap-2">
+              <span>⚠️ To conquer the gate, tap the checkmark (✓) next to at least one set you completed!</span>
+            </div>
+          )}
 
           {/* Complete Dungeon Button */}
           <button

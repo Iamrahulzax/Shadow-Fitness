@@ -124,29 +124,33 @@ export const QuestsView: React.FC = () => {
 
       {/* Weekly Raid Boss Banner (Red Gate) */}
       {raidQuest && (
-        <GlassCard variant="danger" cornerCut="both" className="p-5 space-y-4">
+        <GlassCard variant={raidQuest.completed ? 'cyan' : 'danger'} cornerCut="both" className="p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Skull className="w-5 h-5 text-rose-500 animate-pulse" />
+              {raidQuest.completed ? (
+                <Trophy className="w-5 h-5 text-amber-400 animate-bounce" />
+              ) : (
+                <Skull className="w-5 h-5 text-rose-500 animate-pulse" />
+              )}
               <div>
-                <span className="font-tech text-[10px] text-rose-400 uppercase tracking-widest block">
-                  WEEKLY RED GATE BOSS RAID
+                <span className={`font-tech text-[10px] uppercase tracking-widest block ${raidQuest.completed ? 'text-cyan-400' : 'text-rose-400'}`}>
+                  {raidQuest.completed ? 'WEEKLY RED GATE CONQUERED' : 'WEEKLY RED GATE BOSS RAID'}
                 </span>
                 <h3 className="font-hud text-base font-bold text-white tracking-wide">
                   The Frost Monarch's Vanguard (Ice Elf Warlord)
                 </h3>
               </div>
             </div>
-            <span className="font-hud text-xs text-rose-400 font-bold">
-              Boss HP: {bossHpPercent}%
+            <span className={`font-hud text-xs font-bold ${raidQuest.completed ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {raidQuest.completed ? 'GATE DESTROYED (0% HP)' : `Boss HP: ${bossHpPercent}%`}
             </span>
           </div>
 
           <HUDBar
-            current={bossHpPercent}
+            current={raidQuest.completed ? 0 : bossHpPercent}
             max={100}
-            variant="rose"
-            label="Boss Vitality Barrier"
+            variant={raidQuest.completed ? 'emerald' : 'rose'}
+            label={raidQuest.completed ? 'Gate Barrier Annihilated' : 'Boss Vitality Barrier'}
             sublabel={`${raidQuest.current.toLocaleString()} / ${raidQuest.target.toLocaleString()} kg Volume Dealt`}
             size="md"
           />
@@ -155,7 +159,9 @@ export const QuestsView: React.FC = () => {
             <span className="flex items-center gap-1.5 text-amber-300">
               <Trophy className="w-4 h-4 text-amber-400" /> Reward: +{raidQuest.xpReward} XP + S-Rank Spoil
             </span>
-            <span className="text-slate-400">Resets in 3 days</span>
+            <span className="text-slate-400">
+              {raidQuest.completed ? 'Status: Raid Loot Extracted' : 'Resets in 3 days'}
+            </span>
           </div>
         </GlassCard>
       )}

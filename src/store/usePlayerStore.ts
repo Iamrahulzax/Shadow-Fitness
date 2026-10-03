@@ -307,9 +307,28 @@ export const playerStoreActions = {
   },
 
   closeModal() {
+    // If closing dungeonClear and there was a deferred levelUp modal:
+    if (globalState.activeModal === 'dungeonClear' && globalState.levelUpInfo) {
+      globalState = {
+        ...globalState,
+        activeModal: 'levelUp',
+      };
+      notify();
+      return;
+    }
+    // If closing pushContestArena and there was a deferred levelUp modal:
+    if (globalState.activeModal === 'pushContestArena' && globalState.levelUpInfo) {
+      globalState = {
+        ...globalState,
+        activeModal: 'levelUp',
+      };
+      notify();
+      return;
+    }
     globalState = {
       ...globalState,
       activeModal: null,
+      levelUpInfo: null,
     };
     notify();
   },
@@ -340,7 +359,7 @@ export const playerStoreActions = {
     notify();
   },
 
-  addXP(amount: number) {
+  addXP(amount: number, deferModal: boolean = false) {
     let { level, xp, xpToNextLevel, rank, unallocatedPoints } = globalState.player;
     const oldLevel = level;
     const oldRank = rank;
@@ -372,16 +391,17 @@ export const playerStoreActions = {
 
     if (newLevel > oldLevel) {
       soundFx.playLevelUp();
+      const levelUpInfo = {
+        oldLevel,
+        newLevel,
+        oldRank,
+        newRank,
+        gainedAP,
+      };
       globalState = {
         ...globalState,
-        activeModal: 'levelUp',
-        levelUpInfo: {
-          oldLevel,
-          newLevel,
-          oldRank,
-          newRank,
-          gainedAP,
-        },
+        levelUpInfo,
+        activeModal: deferModal ? globalState.activeModal : 'levelUp',
       };
     }
     notify();
@@ -742,7 +762,7 @@ export const playerStoreActions = {
       }
     }
 
-    playerStoreActions.addXP(xpGained);
+    playerStoreActions.addXP(xpGained, true);
     const updatedGoals = syncTodayGoalRecord(globalState);
     globalState = {
       ...globalState,
@@ -802,6 +822,13 @@ export const playerStoreActions = {
         ...globalState.nutrition,
         proteinConsumed: newTotal,
       },
+      player: {
+        ...globalState.player,
+        stats: {
+          ...globalState.player.stats,
+          STR: hitGoal ? globalState.player.stats.STR + 1 : globalState.player.stats.STR,
+        },
+      },
     };
 
     const proteinQuest = globalState.quests.find((q) => q.id === 'q-hab-2');
@@ -860,6 +887,42 @@ export const playerStoreActions = {
       }
     }
 
+    notify();
+  },
+
+  removeFood(foodId: string) {
+    soundFx.playClick();
+    const item = globalState.nutrition.foodLogs.find((f) => f.id === foodId);
+    if (!item) return;
+
+    globalState = {
+      ...globalState,
+      nutrition: {
+        ...globalState.nutrition,
+        caloriesConsumed: Math.max(0, globalState.nutrition.caloriesConsumed - item.calories),
+        proteinConsumed: Math.max(0, globalState.nutrition.proteinConsumed - item.protein),
+        carbsConsumed: Math.max(0, globalState.nutrition.carbsConsumed - item.carbs),
+        fatConsumed: Math.max(0, globalState.nutrition.fatConsumed - item.fat),
+        foodLogs: globalState.nutrition.foodLogs.filter((f) => f.id !== foodId),
+      },
+    };
+    notify();
+  },
+
+  resetNutrition() {
+    soundFx.playClick();
+    globalState = {
+      ...globalState,
+      nutrition: {
+        ...INITIAL_NUTRITION,
+        foodLogs: [],
+        caloriesConsumed: 0,
+        proteinConsumed: 0,
+        carbsConsumed: 0,
+        fatConsumed: 0,
+        waterConsumedMl: 0,
+      },
+    };
     notify();
   },
 
@@ -1099,11 +1162,11 @@ export const playerStoreActions = {
 
     if (isWin) {
       soundFx.playDungeonClear();
-      playerStoreActions.addXP(result.xpEarned);
+      playerStoreActions.addXP(result.xpEarned, true);
     } else {
       soundFx.playClick();
       if (result.xpEarned > 0) {
-        playerStoreActions.addXP(result.xpEarned);
+        playerStoreActions.addXP(result.xpEarned, true);
       }
     }
 
@@ -1145,6 +1208,23 @@ export const playerStoreActions = {
       dayGoals: updatedGoals,
     };
 
+    notify();
+  },
+
+  extractShadow(achievementId: string) {
+    const ach = globalState.achievements.find((a) => a.id === achievementId);
+    if (!ach || ach.unlocked) return;
+    soundFx.playDungeonClear();
+    globalState = {
+      ...globalState,
+      achievements: globalState.achievements.map((a) =>
+        a.id === achievementId ? { ...a, unlocked: true, unlockedDate: 'Just now' } : a
+      ),
+      player: {
+        ...globalState.player,
+        unallocatedPoints: globalState.player.unallocatedPoints + 3,
+      },
+    };
     notify();
   },
 

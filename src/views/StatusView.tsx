@@ -30,9 +30,10 @@ import { PushContestSection } from '../components/arena/PushContestSection';
 
 interface StatusViewProps {
   onNavigateTab: (tab: 'workout' | 'nutrition' | 'quests' | 'army' | 'leaderboard' | 'analytics') => void;
+  onOpenAPModal?: () => void;
 }
 
-export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
+export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab, onOpenAPModal }) => {
   const [state, actions] = usePlayerStore();
   const { player, nutrition, sleep, steps } = state;
   const [hoveredStat, setHoveredStat] = useState<keyof PlayerStats | null>(null);
@@ -230,13 +231,21 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
 
             {/* AP Available Notification */}
             {player.unallocatedPoints > 0 && (
-              <div className="p-3 bg-cyan-950/60 border border-cyan-400/60 flex items-center justify-between clip-corner-br">
+              <div className="p-3 bg-cyan-950/60 border border-cyan-400/60 flex items-center justify-between clip-corner-br gap-2 flex-wrap">
                 <div className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-cyan-400 animate-pulse" />
                   <span className="font-tech text-xs tracking-wider text-cyan-200">
                     <strong>{player.unallocatedPoints} ABILITY POINTS (AP)</strong> AVAILABLE TO ALLOCATE
                   </span>
                 </div>
+                {onOpenAPModal && (
+                  <button
+                    onClick={onOpenAPModal}
+                    className="px-2.5 py-1 bg-cyan-500 hover:bg-cyan-400 text-black font-hud text-[11px] font-bold uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(0,212,255,0.4)] active:scale-95"
+                  >
+                    Allocate Now →
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -257,14 +266,24 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab }) => {
 
         {/* 5-Stat Allocation Panel */}
         <div className="mt-6 pt-5 border-t border-cyan-500/20">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <h3 className="font-hud text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
               <Shield className="w-4 h-4 text-cyan-400" />
               Stat Attributes Distribution
             </h3>
-            <span className="font-tech text-xs text-slate-400">
-              Unallocated AP: <strong className="font-hud text-cyan-400 text-sm">{player.unallocatedPoints}</strong>
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="font-tech text-xs text-slate-400">
+                Unallocated AP: <strong className="font-hud text-cyan-400 text-sm">{player.unallocatedPoints}</strong>
+              </span>
+              {onOpenAPModal && player.unallocatedPoints > 0 && (
+                <button
+                  onClick={onOpenAPModal}
+                  className="px-2 py-0.5 bg-cyan-950 border border-cyan-400/60 text-cyan-300 font-hud text-[10px] font-bold uppercase tracking-wider hover:bg-cyan-900 transition-colors"
+                >
+                  Allocate AP
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">

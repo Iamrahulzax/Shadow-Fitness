@@ -9,6 +9,8 @@ import {
   Search,
   Clock,
   FlaskConical,
+  Trash2,
+  RotateCcw,
 } from 'lucide-react';
 import { usePlayerStore } from '../store/usePlayerStore';
 import { GlassCard } from '../components/common/GlassCard';
@@ -404,27 +406,54 @@ export const NutritionView: React.FC = () => {
 
         {/* Daily Food Log History */}
         <div className="space-y-2 pt-2">
-          <span className="font-tech text-xs uppercase tracking-wider text-slate-400 block">
-            Today's Logged Items ({nutrition.foodLogs.length})
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="font-tech text-xs uppercase tracking-wider text-slate-400 block">
+              Today's Logged Items ({nutrition.foodLogs.length})
+            </span>
+            {nutrition.foodLogs.length > 0 && (
+              <button
+                type="button"
+                onClick={() => actions.resetNutrition()}
+                className="text-[11px] font-tech text-rose-400/80 hover:text-rose-300 flex items-center gap-1 transition-colors"
+                title="Clear today's logged nutrition items"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset Day's Log</span>
+              </button>
+            )}
+          </div>
 
           <div className="space-y-1.5">
-            {nutrition.foodLogs.map((food) => (
-              <div
-                key={food.id}
-                className="p-2.5 bg-black/30 border border-slate-800 flex items-center justify-between text-xs"
-              >
-                <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="font-tech text-slate-400">{food.time}</span>
-                  <span className="font-sans font-medium text-slate-200">{food.name}</span>
-                </div>
-                <div className="flex items-center gap-3 font-hud text-[11px]">
-                  <span className="text-white font-bold">{food.calories} kcal</span>
-                  <span className="text-cyan-400">{food.protein}g P</span>
-                </div>
+            {nutrition.foodLogs.length === 0 ? (
+              <div className="p-3 bg-black/20 border border-slate-800 text-center font-tech text-xs text-slate-500">
+                No rations logged yet today. Use the presets above or Log Custom Meal.
               </div>
-            ))}
+            ) : (
+              nutrition.foodLogs.map((food) => (
+                <div
+                  key={food.id}
+                  className="p-2.5 bg-black/30 border border-slate-800 flex items-center justify-between text-xs group"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <span className="font-tech text-slate-400 shrink-0">{food.time}</span>
+                    <span className="font-sans font-medium text-slate-200 truncate">{food.name}</span>
+                  </div>
+                  <div className="flex items-center gap-3 font-hud text-[11px] shrink-0">
+                    <span className="text-white font-bold">{food.calories} kcal</span>
+                    <span className="text-cyan-400">{food.protein}g P</span>
+                    <button
+                      type="button"
+                      onClick={() => actions.removeFood(food.id)}
+                      className="text-slate-600 hover:text-rose-400 p-0.5 transition-colors"
+                      title="Remove item from log"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </GlassCard>

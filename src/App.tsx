@@ -78,7 +78,10 @@ export const App: React.FC = () => {
       {/* Main App Content Viewport */}
       <main className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 pt-4">
         {currentTab === 'status' && (
-          <StatusView onNavigateTab={(tab) => setCurrentTab(tab as TabType)} />
+          <StatusView
+            onNavigateTab={(tab) => setCurrentTab(tab as TabType)}
+            onOpenAPModal={() => setShowAPModal(true)}
+          />
         )}
         {currentTab === 'workout' && <WorkoutView />}
         {currentTab === 'nutrition' && <NutritionView />}

@@ -178,6 +178,9 @@ export const LeaderboardView: React.FC = () => {
         if (!matchesName && !matchesTitle && !matchesGuild) return false;
       }
       // Division filter
+      if (division === 'weekly') {
+        return hunter.division === 'Weekly Raid' || hunter.workoutVolumeKg >= 15000 || hunter.isPlayer;
+      }
       if (division === 'my_tier') {
         return hunter.rank === player.rank || hunter.isPlayer;
       }
