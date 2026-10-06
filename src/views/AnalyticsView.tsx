@@ -71,15 +71,15 @@ export const AnalyticsView: React.FC = () => {
   return (
     <div className="space-y-6 pb-24 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <GlassCard variant="cyan" cornerCut="both" className="p-5">
-        <div className="flex items-center justify-between border-b border-cyan-500/20 pb-3 mb-3">
+      <GlassCard variant="cyan" cornerCut="both" className="p-4 sm:p-5">
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 border-b border-cyan-500/20 pb-3 mb-3">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-cyan-400" />
-            <h2 className="font-hud text-sm font-bold tracking-wider text-white uppercase">
+            <Activity className="w-4 h-4 text-cyan-400 shrink-0" />
+            <h2 className="font-hud text-xs sm:text-sm font-bold tracking-wider text-white uppercase">
               Physical Resonance & Power Telemetry
             </h2>
           </div>
-          <span className="font-tech text-xs text-cyan-300">Biometric Sync Active</span>
+          <span className="font-tech text-[10px] sm:text-xs text-cyan-300">Biometric Sync Active</span>
         </div>
         <p className="font-sans text-xs text-slate-300">
           Analyze progressive overload trajectories, dungeon floor penetration depths, and recovery circle cycles.
@@ -87,17 +87,17 @@ export const AnalyticsView: React.FC = () => {
 
         {logStatus && (
           <div className="mt-3 p-2.5 bg-cyan-950/80 border border-cyan-400 text-cyan-300 text-xs font-tech flex items-center gap-2 animate-in fade-in">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            <span>{logStatus}</span>
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0" />
+            <span className="break-words">{logStatus}</span>
           </div>
         )}
       </GlassCard>
 
       {/* Signature 5-Stat Status Radar Hero */}
-      <GlassCard variant="cyan" className="p-6">
-        <div className="flex items-center justify-between mb-4 border-b border-cyan-500/20 pb-2">
+      <GlassCard variant="cyan" className="p-4 sm:p-6">
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 mb-4 border-b border-cyan-500/20 pb-2">
           <h3 className="font-hud text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-            <Zap className="w-4 h-4 text-cyan-400" />
+            <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
             Hero 5-Stat Pentagon Matrix
           </h3>
           <span className="font-tech text-xs text-slate-400">
@@ -135,15 +135,15 @@ export const AnalyticsView: React.FC = () => {
       </GlassCard>
 
       {/* Progressive Overload / Power Level Trend Chart */}
-      <GlassCard variant="violet" className="p-5 space-y-4">
+      <GlassCard variant="violet" className="p-4 sm:p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-violet-500/20 pb-2 flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-violet-400" />
+            <TrendingUp className="w-4 h-4 text-violet-400 shrink-0" />
             <h3 className="font-hud text-xs font-bold uppercase tracking-wider text-white">
               Progressive Overload: Hunter Power Trajectory
             </h3>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center p-0.5 bg-black/60 border border-violet-500/30 rounded-sm">
               <button
                 type="button"
@@ -173,19 +173,19 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Custom Glowing SVG Bar / Trend Visual */}
-        <div className="h-44 w-full flex items-end justify-between gap-2 pt-6 px-2">
+        <div className="h-44 w-full flex items-end justify-between gap-1 sm:gap-2 pt-6 px-1 sm:px-2 overflow-x-auto mobile-scroll-container">
           {powerTrend.map((item) => {
             const heightPct = Math.round((item.power / maxPower) * 100);
             return (
-              <div key={item.day} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-                <span className="font-hud text-[10px] text-cyan-300 font-bold">{item.power}</span>
+              <div key={item.day} className="flex-1 min-w-[32px] flex flex-col items-center gap-1.5 sm:gap-2 h-full justify-end">
+                <span className="font-hud text-[9px] sm:text-[10px] text-cyan-300 font-bold truncate max-w-full">{item.power}</span>
                 <div className="w-full bg-slate-900 border border-violet-500/30 overflow-hidden relative h-full max-h-28">
                   <div
                     className="w-full bg-gradient-to-t from-indigo-600 via-violet-500 to-cyan-400 shadow-[0_0_10px_rgba(123,92,255,0.6)] absolute bottom-0 transition-all duration-700"
                     style={{ height: `${heightPct}%` }}
                   />
                 </div>
-                <span className="font-tech text-[10px] text-slate-400 uppercase">{item.day}</span>
+                <span className="font-tech text-[9px] sm:text-[10px] text-slate-400 uppercase">{item.day}</span>
               </div>
             );
           })}
@@ -193,12 +193,12 @@ export const AnalyticsView: React.FC = () => {
       </GlassCard>
 
       {/* Steps & Dungeon Floor Penetration + Sleep Recovery Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Steps Dungeon Traversal */}
-        <GlassCard variant="cyan" className="p-5 space-y-4">
-          <div className="flex items-center justify-between">
+        <GlassCard variant="cyan" className="p-4 sm:p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <Footprints className="w-4 h-4 text-cyan-400" />
+              <Footprints className="w-4 h-4 text-cyan-400 shrink-0" />
               <h3 className="font-hud text-xs font-bold text-white uppercase tracking-wider">
                 Dungeon Traversal: Floor {steps.dungeonFloor}
               </h3>
@@ -219,17 +219,17 @@ export const AnalyticsView: React.FC = () => {
           />
 
           {/* Quick Steps Logging Form */}
-          <form onSubmit={handleLogSteps} className="flex items-center gap-2 pt-1">
+          <form onSubmit={handleLogSteps} className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 pt-1">
             <input
               type="number"
               step="500"
               value={stepsInput}
               onChange={(e) => setStepsInput(Number(e.target.value))}
-              className="flex-1 bg-black/60 border border-slate-700 px-3 py-1.5 text-xs text-white font-hud focus:outline-none focus:border-cyan-400"
+              className="flex-1 min-w-0 bg-black/60 border border-slate-700 px-3 py-2 sm:py-1.5 text-xs text-white font-hud focus:outline-none focus:border-cyan-400"
             />
             <button
               type="submit"
-              className="px-3 py-1.5 bg-cyan-950 border border-cyan-500/50 text-cyan-300 font-hud text-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:bg-cyan-900"
+              className="px-3 py-2 sm:py-1.5 bg-cyan-950 border border-cyan-500/50 text-cyan-300 font-hud text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-cyan-900 touch-target shrink-0"
             >
               <Plus className="w-3.5 h-3.5" /> Traverse Steps
             </button>
@@ -277,18 +277,18 @@ export const AnalyticsView: React.FC = () => {
 
           {/* Log Sleep Form */}
           <form onSubmit={handleLogSleep} className="space-y-2 pt-1">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
               <input
                 type="number"
                 step="0.5"
                 value={sleepInput}
                 onChange={(e) => setSleepInput(Number(e.target.value))}
-                className="bg-black/60 border border-slate-700 px-3 py-1.5 text-xs text-white font-hud focus:outline-none focus:border-emerald-400"
+                className="bg-black/60 border border-slate-700 px-3 py-2 sm:py-1.5 text-xs text-white font-hud focus:outline-none focus:border-emerald-400"
               />
               <select
                 value={sleepQuality}
                 onChange={(e) => setSleepQuality(e.target.value as typeof sleepQuality)}
-                className="bg-black/60 border border-slate-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+                className="bg-black/60 border border-slate-700 px-2 py-2 sm:py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
               >
                 <option value="Restful">Restful (Deep Cryo)</option>
                 <option value="Average">Average</option>
@@ -298,7 +298,7 @@ export const AnalyticsView: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-1.5 bg-emerald-950 border border-emerald-500/50 text-emerald-300 font-hud text-xs font-bold uppercase tracking-wider hover:bg-emerald-900"
+              className="w-full py-2.5 sm:py-1.5 bg-emerald-950 border border-emerald-500/50 text-emerald-300 font-hud text-xs font-bold uppercase tracking-wider hover:bg-emerald-900 touch-target"
             >
               Update Recovery Chamber Log
             </button>

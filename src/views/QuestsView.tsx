@@ -38,14 +38,14 @@ export const QuestsView: React.FC = () => {
     <div className="space-y-6 pb-24 animate-in fade-in duration-300">
       {/* Header Notification Banner */}
       <GlassCard variant="cyan" cornerCut="both" className="p-5">
-        <div className="flex items-center justify-between border-b border-cyan-500/20 pb-3 mb-3">
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-cyan-500/20 pb-3 mb-3 gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-cyan-400 shadow-[0_0_8px_#00D4FF]" />
             <h2 className="font-hud text-sm font-bold tracking-wider text-white uppercase">
               System Directives & Gate Mandates
             </h2>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => actions.openStreakCalendar()}
               className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-500/40 text-amber-300 font-hud text-[11px] rounded-sm transition-all shadow-[0_0_8px_rgba(245,158,11,0.2)]"
@@ -114,7 +114,7 @@ export const QuestsView: React.FC = () => {
 
           <button
             onClick={() => actions.openAIRepTracker('quest')}
-            className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 text-white font-hud text-xs font-bold uppercase tracking-widest clip-hex-btn shadow-[0_0_15px_rgba(0,212,255,0.4)] flex items-center justify-center gap-2 shrink-0 active:scale-95 transition-all"
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 text-white font-hud text-xs font-bold uppercase tracking-widest clip-hex-btn shadow-[0_0_15px_rgba(0,212,255,0.4)] flex items-center justify-center gap-2 shrink-0 active:scale-95 transition-all touch-target"
           >
             <Camera className="w-3.5 h-3.5" />
             <span>Launch AI Scanner</span>
@@ -214,7 +214,7 @@ export const QuestsView: React.FC = () => {
                   </p>
 
                     {/* Progress & Stat Reward Badge */}
-                    <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-800/80 font-tech text-xs">
+                    <div className="flex flex-col xs:flex-row xs:items-center justify-between mt-3 pt-2 border-t border-slate-800/80 font-tech text-xs gap-2">
                       <div className="flex items-center gap-2">
                         <span className="text-slate-400">Progress:</span>
                         <span className="font-hud text-cyan-300 font-bold">
@@ -222,7 +222,7 @@ export const QuestsView: React.FC = () => {
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         {quest.id === 'q-sys-1' && !quest.completed && (
                           <button
                             onClick={(e) => {

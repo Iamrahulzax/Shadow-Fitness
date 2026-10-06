@@ -382,19 +382,19 @@ export const LeaderboardView: React.FC = () => {
       </GlassCard>
 
       {/* 2. Top 3 Podium Section */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 items-end pt-4">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-4 items-end pt-4">
         {/* Silver - 2nd Place */}
         {podium.second && (
           <div
             onClick={() => setSelectedHunter(podium.second)}
-            className="cursor-pointer group flex flex-col items-center p-3 sm:p-4 bg-gradient-to-t from-slate-900/90 to-[#121422] border-2 border-slate-400/60 clip-corner-tl shadow-[0_0_20px_rgba(148,163,184,0.2)] hover:border-slate-300 hover:shadow-[0_0_25px_rgba(148,163,184,0.4)] transition-all transform hover:-translate-y-1"
+            className="cursor-pointer group flex flex-col items-center p-2 xs:p-2.5 sm:p-4 bg-gradient-to-t from-slate-900/90 to-[#121422] border-2 border-slate-400/60 clip-corner-tl shadow-[0_0_20px_rgba(148,163,184,0.2)] hover:border-slate-300 hover:shadow-[0_0_25px_rgba(148,163,184,0.4)] transition-all transform hover:-translate-y-1"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 border-2 border-slate-300 flex items-center justify-center font-hud text-xs sm:text-sm font-black text-slate-200 mb-2 shadow-[0_0_10px_#94A3B8]">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-800 border-2 border-slate-300 flex items-center justify-center font-hud text-[10px] sm:text-sm font-black text-slate-200 mb-1.5 shadow-[0_0_10px_#94A3B8]">
               2
             </div>
 
             {/* Avatar Frame */}
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-sm border-2 border-slate-400 bg-black/80 flex items-center justify-center overflow-hidden mb-2">
+            <div className="relative w-10 h-10 xs:w-12 xs:h-12 sm:w-16 sm:h-16 rounded-sm border-2 border-slate-400 bg-black/80 flex items-center justify-center overflow-hidden mb-1.5">
               {isPhotoAvatar(podium.second.avatar) ? (
                 <img
                   src={podium.second.avatar}
@@ -402,25 +402,25 @@ export const LeaderboardView: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-slate-300" />
+                <Crown className="w-5 h-5 sm:w-8 sm:h-8 text-slate-300" />
               )}
-              <span className={`absolute bottom-0 right-0 px-1 text-[8px] font-hud font-bold border ${rankBadgeStyle(podium.second.rank)}`}>
+              <span className={`absolute bottom-0 right-0 px-0.5 sm:px-1 text-[7px] sm:text-[8px] font-hud font-bold border ${rankBadgeStyle(podium.second.rank)}`}>
                 {podium.second.rank}
               </span>
             </div>
 
-            <h3 className="font-hud text-xs sm:text-sm font-black text-white text-center truncate max-w-full group-hover:text-cyan-300">
+            <h3 className="font-hud text-[11px] xs:text-xs sm:text-sm font-black text-white text-center truncate max-w-full group-hover:text-cyan-300">
               {podium.second.name}
             </h3>
-            <p className="font-tech text-[10px] text-slate-400 uppercase truncate">
+            <p className="font-tech text-[9px] sm:text-[10px] text-slate-400 uppercase truncate">
               {podium.second.title}
             </p>
 
-            <div className="mt-2 text-center">
-              <span className="font-hud text-xs sm:text-sm font-black text-slate-200 block">
+            <div className="mt-1 sm:mt-2 text-center">
+              <span className="font-hud text-[11px] xs:text-xs sm:text-sm font-black text-slate-200 block">
                 {getMetricDisplay(podium.second).value}
               </span>
-              <span className="font-tech text-[9px] text-slate-400 uppercase">
+              <span className="font-tech text-[8px] sm:text-[9px] text-slate-400 uppercase">
                 {getMetricDisplay(podium.second).unit}
               </span>
             </div>
@@ -431,17 +431,17 @@ export const LeaderboardView: React.FC = () => {
         {podium.first && (
           <div
             onClick={() => setSelectedHunter(podium.first)}
-            className="cursor-pointer group flex flex-col items-center p-4 sm:p-5 bg-gradient-to-t from-amber-950/80 via-[#1A1608] to-[#251E09] border-2 border-amber-400 clip-corner-both shadow-[0_0_30px_rgba(245,158,11,0.45)] hover:border-amber-300 hover:shadow-[0_0_40px_rgba(245,158,11,0.65)] transition-all transform hover:-translate-y-1 z-10"
+            className="cursor-pointer group flex flex-col items-center p-2.5 xs:p-3 sm:p-5 bg-gradient-to-t from-amber-950/80 via-[#1A1608] to-[#251E09] border-2 border-amber-400 clip-corner-both shadow-[0_0_30px_rgba(245,158,11,0.45)] hover:border-amber-300 hover:shadow-[0_0_40px_rgba(245,158,11,0.65)] transition-all transform hover:-translate-y-1 z-10"
           >
-            <div className="relative mb-2">
-              <Crown className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 drop-shadow-[0_0_12px_#F59E0B] animate-pulse" />
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-black font-hud text-[11px] font-black flex items-center justify-center">
+            <div className="relative mb-1.5">
+              <Crown className="w-6 h-6 sm:w-10 sm:h-10 text-amber-400 drop-shadow-[0_0_12px_#F59E0B] animate-pulse" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-500 text-black font-hud text-[9px] sm:text-[11px] font-black flex items-center justify-center">
                 1
               </div>
             </div>
 
             {/* Avatar Frame */}
-            <div className="relative w-14 h-14 sm:w-20 sm:h-20 rounded-sm border-2 border-amber-400 bg-black/90 flex items-center justify-center overflow-hidden mb-2 shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+            <div className="relative w-12 h-12 xs:w-14 xs:h-14 sm:w-20 sm:h-20 rounded-sm border-2 border-amber-400 bg-black/90 flex items-center justify-center overflow-hidden mb-1.5 shadow-[0_0_20px_rgba(245,158,11,0.4)]">
               {isPhotoAvatar(podium.first.avatar) ? (
                 <img
                   src={podium.first.avatar}
@@ -449,25 +449,25 @@ export const LeaderboardView: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-amber-300" />
+                <Sparkles className="w-6 h-6 sm:w-10 sm:h-10 text-amber-300" />
               )}
-              <span className={`absolute bottom-0 right-0 px-1.5 text-[9px] font-hud font-black border ${rankBadgeStyle(podium.first.rank)}`}>
+              <span className={`absolute bottom-0 right-0 px-1 text-[8px] sm:text-[9px] font-hud font-black border ${rankBadgeStyle(podium.first.rank)}`}>
                 {podium.first.rank}
               </span>
             </div>
 
-            <h3 className="font-hud text-sm sm:text-base font-black text-amber-200 text-center truncate max-w-full">
+            <h3 className="font-hud text-xs sm:text-base font-black text-amber-200 text-center truncate max-w-full">
               {podium.first.name}
             </h3>
-            <p className="font-tech text-xs text-amber-400/90 uppercase font-bold truncate">
+            <p className="font-tech text-[10px] sm:text-xs text-amber-400/90 uppercase font-bold truncate">
               {podium.first.title}
             </p>
 
-            <div className="mt-2 text-center">
-              <span className="font-hud text-sm sm:text-base font-black text-white block text-glow-gold">
+            <div className="mt-1 sm:mt-2 text-center">
+              <span className="font-hud text-xs sm:text-base font-black text-white block text-glow-gold">
                 {getMetricDisplay(podium.first).value}
               </span>
-              <span className="font-tech text-[10px] text-amber-300 uppercase font-bold">
+              <span className="font-tech text-[9px] sm:text-[10px] text-amber-300 uppercase font-bold">
                 {getMetricDisplay(podium.first).unit}
               </span>
             </div>
@@ -478,14 +478,14 @@ export const LeaderboardView: React.FC = () => {
         {podium.third && (
           <div
             onClick={() => setSelectedHunter(podium.third)}
-            className="cursor-pointer group flex flex-col items-center p-3 sm:p-4 bg-gradient-to-t from-orange-950/80 to-[#1A1412] border-2 border-orange-500/60 clip-corner-br shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:border-orange-400 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-1"
+            className="cursor-pointer group flex flex-col items-center p-2 xs:p-2.5 sm:p-4 bg-gradient-to-t from-orange-950/80 to-[#1A1412] border-2 border-orange-500/60 clip-corner-br shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:border-orange-400 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-1"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-900 border-2 border-orange-400 flex items-center justify-center font-hud text-xs sm:text-sm font-black text-orange-200 mb-2 shadow-[0_0_10px_#EA580C]">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-orange-900 border-2 border-orange-400 flex items-center justify-center font-hud text-[10px] sm:text-sm font-black text-orange-200 mb-1.5 shadow-[0_0_10px_#EA580C]">
               3
             </div>
 
             {/* Avatar Frame */}
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-sm border-2 border-orange-400 bg-black/80 flex items-center justify-center overflow-hidden mb-2">
+            <div className="relative w-10 h-10 xs:w-12 xs:h-12 sm:w-16 sm:h-16 rounded-sm border-2 border-orange-400 bg-black/80 flex items-center justify-center overflow-hidden mb-1.5">
               {isPhotoAvatar(podium.third.avatar) ? (
                 <img
                   src={podium.third.avatar}
@@ -493,25 +493,25 @@ export const LeaderboardView: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <Medal className="w-6 h-6 sm:w-8 sm:h-8 text-orange-300" />
+                <Medal className="w-5 h-5 sm:w-8 sm:h-8 text-orange-300" />
               )}
-              <span className={`absolute bottom-0 right-0 px-1 text-[8px] font-hud font-bold border ${rankBadgeStyle(podium.third.rank)}`}>
+              <span className={`absolute bottom-0 right-0 px-0.5 sm:px-1 text-[7px] sm:text-[8px] font-hud font-bold border ${rankBadgeStyle(podium.third.rank)}`}>
                 {podium.third.rank}
               </span>
             </div>
 
-            <h3 className="font-hud text-xs sm:text-sm font-black text-white text-center truncate max-w-full group-hover:text-cyan-300">
+            <h3 className="font-hud text-[11px] xs:text-xs sm:text-sm font-black text-white text-center truncate max-w-full group-hover:text-cyan-300">
               {podium.third.name}
             </h3>
-            <p className="font-tech text-[10px] text-slate-400 uppercase truncate">
+            <p className="font-tech text-[9px] sm:text-[10px] text-slate-400 uppercase truncate">
               {podium.third.title}
             </p>
 
-            <div className="mt-2 text-center">
-              <span className="font-hud text-xs sm:text-sm font-black text-orange-200 block">
+            <div className="mt-1 sm:mt-2 text-center">
+              <span className="font-hud text-[11px] xs:text-xs sm:text-sm font-black text-orange-200 block">
                 {getMetricDisplay(podium.third).value}
               </span>
-              <span className="font-tech text-[9px] text-slate-400 uppercase">
+              <span className="font-tech text-[8px] sm:text-[9px] text-slate-400 uppercase">
                 {getMetricDisplay(podium.third).unit}
               </span>
             </div>
@@ -520,7 +520,7 @@ export const LeaderboardView: React.FC = () => {
       </div>
 
       {/* 3. Category Selector Matrix */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
         {(
           [
             { id: 'power', label: 'Combat Power', icon: Trophy, unit: 'PWR' },
@@ -732,12 +732,12 @@ export const LeaderboardView: React.FC = () => {
               </div>
 
               {/* Right: Metric Value & Actions */}
-              <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                 <div className="text-right">
                   <span className={`font-hud text-xs sm:text-base font-black ${metric.color} block`}>
                     {metric.value}
                   </span>
-                  <span className="font-tech text-[10px] text-slate-400 uppercase">
+                  <span className="font-tech text-[9px] sm:text-[10px] text-slate-400 uppercase">
                     {metric.unit || metric.label}
                   </span>
                 </div>
@@ -763,7 +763,7 @@ export const LeaderboardView: React.FC = () => {
                 {!isPlayer && (
                   <button
                     onClick={() => actions.openPushContest(hunter.id)}
-                    className="px-2 py-1 bg-rose-950/70 hover:bg-rose-900 border border-rose-500/50 hover:border-rose-400 font-hud text-[10px] text-rose-300 font-bold uppercase transition-all shadow-[0_0_8px_rgba(255,59,92,0.2)] flex items-center gap-1 active:scale-95"
+                    className="px-1.5 xs:px-2 py-1 bg-rose-950/70 hover:bg-rose-900 border border-rose-500/50 hover:border-rose-400 font-hud text-[9px] xs:text-[10px] text-rose-300 font-bold uppercase transition-all shadow-[0_0_8px_rgba(255,59,92,0.2)] flex items-center gap-1 active:scale-95"
                     title="Challenge to Live Push-up Contest"
                   >
                     <Swords className="w-3 h-3 text-rose-400" />
@@ -771,10 +771,10 @@ export const LeaderboardView: React.FC = () => {
                   </button>
                 )}
 
-                {/* Inspect Button */}
+                {/* Inspect Button (Hidden on xs where tapping card/avatar inspects) */}
                 <button
                   onClick={() => setSelectedHunter(hunter)}
-                  className="px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 font-hud text-[10px] text-slate-300 hover:text-white uppercase transition-colors"
+                  className="hidden xs:inline-block px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 font-hud text-[10px] text-slate-300 hover:text-white uppercase transition-colors"
                 >
                   Inspect
                 </button>
@@ -786,25 +786,25 @@ export const LeaderboardView: React.FC = () => {
       </div>
 
       {/* 6. Sticky Bottom Dock for Player Standing */}
-      <div className="fixed bottom-14 left-0 right-0 z-30 px-3 pointer-events-none">
+      <div className="fixed bottom-14 left-0 right-0 z-30 px-2 sm:px-3 pointer-events-none">
         <div className="max-w-4xl mx-auto pointer-events-auto">
-          <div className="p-3 bg-[#0A0C16]/95 backdrop-blur-xl border border-cyan-400/70 clip-corner-both shadow-[0_0_25px_rgba(0,212,255,0.35)] flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-none border border-cyan-400 bg-cyan-950 flex items-center justify-center font-hud text-xs font-black text-cyan-300 shadow-[0_0_10px_#00D4FF]">
+          <div className="p-2 sm:p-3 bg-[#0A0C16]/95 backdrop-blur-xl border border-cyan-400/70 clip-corner-both shadow-[0_0_25px_rgba(0,212,255,0.35)] flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-none border border-cyan-400 bg-cyan-950 flex items-center justify-center font-hud text-[11px] sm:text-xs font-black text-cyan-300 shadow-[0_0_10px_#00D4FF] shrink-0">
                 #{playerRankNum}
               </div>
 
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-hud text-xs font-black text-white">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-hud text-xs font-black text-white truncate">
                     {player.name} (Your Standing)
                   </span>
-                  <span className={`px-1 text-[8px] font-hud font-bold border ${rankBadgeStyle(player.rank)}`}>
+                  <span className={`px-1 text-[8px] font-hud font-bold border ${rankBadgeStyle(player.rank)} shrink-0`}>
                     {player.rank}
                   </span>
                 </div>
 
-                <div className="font-tech text-[11px] text-slate-300">
+                <div className="font-tech text-[10px] sm:text-[11px] text-slate-300 truncate">
                   Rating: <strong className="text-cyan-400 font-hud">{playerEntry.powerRating.toLocaleString()} PWR</strong>
                   {rivalAhead && (
                     <span className="ml-2 text-slate-400 hidden sm:inline">
@@ -818,7 +818,7 @@ export const LeaderboardView: React.FC = () => {
 
             <button
               onClick={scrollToPlayer}
-              className="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_12px_rgba(0,212,255,0.4)] active:scale-95 transition-all"
+              className="w-full xs:w-auto px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_12px_rgba(0,212,255,0.4)] active:scale-95 transition-all text-center"
             >
               Jump to Me
             </button>

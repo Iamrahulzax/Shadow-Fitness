@@ -73,10 +73,13 @@ export const App: React.FC = () => {
         onOpenEditProfile={actions.openEditProfile}
         onOpenLeaderboard={() => setCurrentTab('leaderboard')}
         onLogout={handleLogout}
+        currentTab={currentTab}
+        onSelectTab={(tab) => setCurrentTab(tab)}
+        pendingQuestsCount={pendingQuestsCount}
       />
 
       {/* Main App Content Viewport */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 pt-4">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 pt-4 pb-24 sm:pb-28">
         {currentTab === 'status' && (
           <StatusView
             onNavigateTab={(tab) => setCurrentTab(tab as TabType)}

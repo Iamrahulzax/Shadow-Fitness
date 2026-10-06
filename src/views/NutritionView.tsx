@@ -107,10 +107,10 @@ export const NutritionView: React.FC = () => {
         />
 
         {/* Macro Nutrient Sub-bars */}
-        <div className="grid grid-cols-3 gap-3 pt-2">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-3 pt-2">
           {/* Protein Bar */}
-          <div className="p-3 bg-black/50 border border-slate-800">
-            <div className="flex items-center justify-between mb-1 text-xs font-tech text-slate-300 uppercase">
+          <div className="p-2 sm:p-3 bg-black/50 border border-slate-800">
+            <div className="flex items-center justify-between mb-1 text-[11px] sm:text-xs font-tech text-slate-300 uppercase">
               <span className="text-cyan-400 font-bold">Protein</span>
               <span className="font-hud">{nutrition.proteinConsumed}g</span>
             </div>
@@ -120,14 +120,14 @@ export const NutritionView: React.FC = () => {
                 style={{ width: `${Math.min(100, (nutrition.proteinConsumed / nutrition.proteinGoal) * 100)}%` }}
               />
             </div>
-            <span className="text-[10px] font-tech text-slate-500 mt-1 block text-right">
+            <span className="text-[9px] sm:text-[10px] font-tech text-slate-500 mt-1 block text-right">
               Goal: {nutrition.proteinGoal}g
             </span>
           </div>
 
           {/* Carbs Bar */}
-          <div className="p-3 bg-black/50 border border-slate-800">
-            <div className="flex items-center justify-between mb-1 text-xs font-tech text-slate-300 uppercase">
+          <div className="p-2 sm:p-3 bg-black/50 border border-slate-800">
+            <div className="flex items-center justify-between mb-1 text-[11px] sm:text-xs font-tech text-slate-300 uppercase">
               <span className="text-amber-400 font-bold">Carbs</span>
               <span className="font-hud">{nutrition.carbsConsumed}g</span>
             </div>
@@ -137,14 +137,14 @@ export const NutritionView: React.FC = () => {
                 style={{ width: `${Math.min(100, (nutrition.carbsConsumed / nutrition.carbsGoal) * 100)}%` }}
               />
             </div>
-            <span className="text-[10px] font-tech text-slate-500 mt-1 block text-right">
+            <span className="text-[9px] sm:text-[10px] font-tech text-slate-500 mt-1 block text-right">
               Goal: {nutrition.carbsGoal}g
             </span>
           </div>
 
           {/* Fat Bar */}
-          <div className="p-3 bg-black/50 border border-slate-800">
-            <div className="flex items-center justify-between mb-1 text-xs font-tech text-slate-300 uppercase">
+          <div className="p-2 sm:p-3 bg-black/50 border border-slate-800">
+            <div className="flex items-center justify-between mb-1 text-[11px] sm:text-xs font-tech text-slate-300 uppercase">
               <span className="text-rose-400 font-bold">Fat</span>
               <span className="font-hud">{nutrition.fatConsumed}g</span>
             </div>
@@ -154,7 +154,7 @@ export const NutritionView: React.FC = () => {
                 style={{ width: `${Math.min(100, (nutrition.fatConsumed / nutrition.fatGoal) * 100)}%` }}
               />
             </div>
-            <span className="text-[10px] font-tech text-slate-500 mt-1 block text-right">
+            <span className="text-[9px] sm:text-[10px] font-tech text-slate-500 mt-1 block text-right">
               Goal: {nutrition.fatGoal}g
             </span>
           </div>
@@ -175,7 +175,7 @@ export const NutritionView: React.FC = () => {
             <span className="font-tech text-xs text-cyan-300">{proteinPercent}% Synthesized</span>
           </div>
 
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col xs:flex-row items-center xs:items-start sm:items-center gap-4 sm:gap-5">
             {/* Circular Progress Ring */}
             <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
               <svg className="w-24 h-24 transform -rotate-90">
@@ -243,7 +243,7 @@ export const NutritionView: React.FC = () => {
             <span className="font-tech text-xs text-cyan-300">{waterPercent}% Capacity</span>
           </div>
 
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col xs:flex-row items-center xs:items-start sm:items-center gap-4 sm:gap-5">
             {/* Visual Droplet Flask Container */}
             <div className="relative w-20 h-24 bg-black/60 border-2 border-cyan-500/40 clip-corner-br flex flex-col justify-end overflow-hidden shrink-0">
               <div
@@ -316,7 +316,7 @@ export const NutritionView: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <div>
                   <label className="block font-tech text-[10px] text-slate-400 uppercase mb-1">Calories</label>
                   <input

@@ -22,9 +22,9 @@ export const StatRadarChart: React.FC<StatRadarChartProps> = ({
   onStatClick,
   highlightStat,
 }) => {
-  const size = 280;
+  const size = 320;
   const center = size / 2;
-  const radius = size * 0.38;
+  const radius = 96;
 
   // 5 stats organized clockwise starting from top
   const statList: { key: keyof PlayerStats; label: string; sublabel: string }[] = [
@@ -74,12 +74,10 @@ export const StatRadarChart: React.FC<StatRadarChartProps> = ({
   const gridLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
 
   return (
-    <div className="relative flex flex-col items-center justify-center p-2 select-none">
+    <div className="relative flex flex-col items-center justify-center p-1 sm:p-2 select-none w-full max-w-[280px] sm:max-w-[320px] mx-auto">
       <svg
-        width={size}
-        height={size}
         viewBox={`0 0 ${size} ${size}`}
-        className="overflow-visible drop-shadow-[0_0_15px_rgba(0,212,255,0.2)]"
+        className="w-full h-auto max-w-[260px] sm:max-w-[300px] drop-shadow-[0_0_15px_rgba(0,212,255,0.2)]"
       >
         <defs>
           <radialGradient id="radarFill" cx="50%" cy="50%" r="50%">

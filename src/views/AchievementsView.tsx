@@ -81,7 +81,7 @@ export const AchievementsView: React.FC = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-4 pt-3 border-t border-slate-800">
           {[
             { id: 'all', label: `All Shadows (${achievements.length})` },
             { id: 'unlocked', label: `Extracted Soldiers (${unlockedCount})` },
@@ -200,7 +200,7 @@ export const AchievementsView: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between flex-wrap gap-2">
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex flex-col xs:flex-row xs:items-center justify-between gap-2">
                     <div>
                       <span className="font-tech text-[10px] text-slate-400 uppercase block">
                         Extraction Requirement

@@ -101,8 +101,8 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab, onOpenAPM
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           {/* Left: Info & Resource Bars */}
           <div className="space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3.5">
+            <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5 min-w-0">
                 {/* Hunter Avatar & Photo Frame */}
                 {(() => {
                   const avatarPreset =
@@ -188,9 +188,9 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab, onOpenAPM
               </div>
 
               {/* Level Hex */}
-              <div className="text-right">
+              <div className="text-left xs:text-right shrink-0">
                 <span className="block font-tech text-[11px] text-slate-400 uppercase">Current Level</span>
-                <span className="font-hud text-3xl font-black text-cyan-300 drop-shadow-[0_0_12px_#00D4FF]">
+                <span className="font-hud text-2xl xs:text-3xl font-black text-cyan-300 drop-shadow-[0_0_12px_#00D4FF]">
                   LV. {player.level}
                 </span>
               </div>
@@ -286,7 +286,7 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab, onOpenAPM
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
             {(Object.keys(player.stats) as (keyof PlayerStats)[]).map((key) => {
               const meta = statMetadata[key];
               const Icon = meta.icon;
@@ -344,7 +344,7 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab, onOpenAPM
 
       {/* Goal Streak & Daily Gate Clearance Calendar Section */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-cyan-400 shadow-[0_0_8px_#00D4FF]" />
             <h3 className="font-hud text-xs uppercase tracking-widest text-slate-300 flex items-center gap-1.5 font-bold">
@@ -353,7 +353,7 @@ export const StatusView: React.FC<StatusViewProps> = ({ onNavigateTab, onOpenAPM
             </h3>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowCalendar(!showCalendar)}
               className="px-2 py-0.5 font-tech text-xs text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/60 rounded-sm bg-cyan-950/40 transition-colors"

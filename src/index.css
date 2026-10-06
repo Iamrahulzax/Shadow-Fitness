@@ -129,3 +129,24 @@ body.reduced-glow * {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Responsive & Mobile Touch Utilities */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Horizontal scroll container with smooth momentum scrolling */
+.mobile-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Prevent text overflow in tight mobile flex containers */
+.text-responsive-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

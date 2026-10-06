@@ -209,10 +209,10 @@ export const WorkoutView: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             <button
               onClick={() => actions.openAIRepTracker('workout')}
-              className="px-4 py-3 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400 text-cyan-200 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center gap-2 active:scale-95"
+              className="w-full sm:w-auto px-4 py-3 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400 text-cyan-200 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center gap-2 active:scale-95 touch-target"
             >
               <Camera className="w-4 h-4 text-cyan-400 animate-pulse" />
               <span>AI Push-up Scanner</span>
@@ -220,7 +220,7 @@ export const WorkoutView: React.FC = () => {
 
             <button
               onClick={() => setIsLoggingActive(!isLoggingActive)}
-              className={`px-5 py-3 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-lg flex items-center justify-center gap-2 ${
+              className={`w-full sm:w-auto px-5 py-3 font-hud text-xs font-black tracking-widest uppercase transition-all clip-hex-btn shadow-lg flex items-center justify-center gap-2 touch-target ${
                 isLoggingActive
                   ? 'bg-rose-900/80 border border-rose-500 text-rose-200 shadow-[0_0_15px_rgba(255,59,92,0.4)]'
                   : 'bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white shadow-[0_0_20px_rgba(123,92,255,0.4)]'
@@ -364,7 +364,7 @@ export const WorkoutView: React.FC = () => {
                 </div>
 
                 {/* Sets Header */}
-                <div className="grid grid-cols-12 gap-2 text-[11px] font-tech text-slate-400 uppercase px-1 mb-1.5">
+                <div className="grid grid-cols-12 gap-1 sm:gap-2 text-[10px] sm:text-[11px] font-tech text-slate-400 uppercase px-1 mb-1.5">
                   <span className="col-span-2 text-center">Set</span>
                   <span className="col-span-4 text-center">Weight (KG)</span>
                   <span className="col-span-4 text-center">Reps</span>
@@ -376,7 +376,7 @@ export const WorkoutView: React.FC = () => {
                   {exercise.sets.map((set, setIdx) => (
                     <div
                       key={set.setNumber}
-                      className={`grid grid-cols-12 gap-2 items-center p-1.5 border transition-colors ${
+                      className={`grid grid-cols-12 gap-1 sm:gap-2 items-center p-1.5 border transition-colors ${
                         set.completed
                           ? 'bg-cyan-950/20 border-cyan-500/40 text-cyan-200'
                           : 'bg-black/40 border-slate-800'
@@ -385,30 +385,30 @@ export const WorkoutView: React.FC = () => {
                       <span className="col-span-2 text-center font-hud text-xs font-bold text-slate-400">
                         {set.setNumber}
                       </span>
-                      <div className="col-span-4">
+                      <div className="col-span-4 min-w-0">
                         <input
                           type="number"
                           value={set.weightKg}
                           onChange={(e) =>
                             handleUpdateSet(exercise.id, setIdx, 'weightKg', parseFloat(e.target.value) || 0)
                           }
-                          className="w-full bg-black/60 border border-slate-700 text-center font-hud text-xs py-1 text-white focus:outline-none focus:border-cyan-400"
+                          className="w-full bg-black/60 border border-slate-700 text-center font-hud text-xs py-1.5 px-1 min-w-0 text-white focus:outline-none focus:border-cyan-400"
                         />
                       </div>
-                      <div className="col-span-4">
+                      <div className="col-span-4 min-w-0">
                         <input
                           type="number"
                           value={set.reps}
                           onChange={(e) =>
                             handleUpdateSet(exercise.id, setIdx, 'reps', parseInt(e.target.value, 10) || 0)
                           }
-                          className="w-full bg-black/60 border border-slate-700 text-center font-hud text-xs py-1 text-white focus:outline-none focus:border-cyan-400"
+                          className="w-full bg-black/60 border border-slate-700 text-center font-hud text-xs py-1.5 px-1 min-w-0 text-white focus:outline-none focus:border-cyan-400"
                         />
                       </div>
                       <div className="col-span-2 flex justify-center">
                         <button
                           onClick={() => handleToggleSet(exercise.id, setIdx)}
-                          className={`w-7 h-7 rounded-none border flex items-center justify-center transition-all ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-none border flex items-center justify-center transition-all ${
                             set.completed
                               ? 'bg-cyan-500 border-cyan-400 text-black font-bold shadow-[0_0_8px_#00D4FF]'
                               : 'bg-black/60 border-slate-700 text-slate-500 hover:border-cyan-400'
@@ -543,10 +543,10 @@ export const WorkoutView: React.FC = () => {
         <div className="space-y-3">
           {workouts.map((workout) => (
             <GlassCard key={workout.id} variant="default" className="p-4 space-y-3">
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-2">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-hud text-xs px-2 py-0.5 bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-bold">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-hud text-xs px-2 py-0.5 bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-bold shrink-0">
                       {workout.gateRank}-RANK
                     </span>
                     <h4 className="font-hud text-sm font-bold text-white">
@@ -558,7 +558,7 @@ export const WorkoutView: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="text-right">
+                <div className="text-left xs:text-right shrink-0">
                   <span className="font-hud text-base font-bold text-cyan-300">
                     {workout.totalVolumeKg.toLocaleString()} KG
                   </span>

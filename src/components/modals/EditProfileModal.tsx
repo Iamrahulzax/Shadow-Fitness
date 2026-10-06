@@ -296,28 +296,28 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const AvatarIcon = selectedPreset.icon;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
       <div className="relative w-full max-w-2xl max-h-[92vh] flex flex-col bg-[#090A10] border-2 border-cyan-500/80 clip-corner-both shadow-[0_0_40px_rgba(0,212,255,0.35)] text-slate-100 overflow-hidden">
         
         {/* Holographic Header Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-cyan-500/30 bg-gradient-to-r from-cyan-950/70 via-slate-900/60 to-black">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 bg-cyan-400 rounded-none shadow-[0_0_10px_#00D4FF] animate-pulse" />
-            <div>
-              <h2 className="font-hud text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                Hunter Profile Overwrite
-                <span className="text-[10px] font-tech text-cyan-400 bg-cyan-950/80 px-2 py-0.5 border border-cyan-500/40 rounded-sm">
+        <div className="flex items-center justify-between px-3 sm:px-5 py-3 sm:py-3.5 border-b border-cyan-500/30 bg-gradient-to-r from-cyan-950/70 via-slate-900/60 to-black">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <span className="w-2.5 h-2.5 bg-cyan-400 rounded-none shadow-[0_0_10px_#00D4FF] animate-pulse shrink-0" />
+            <div className="min-w-0">
+              <h2 className="font-hud text-xs sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span>Hunter Profile Overwrite</span>
+                <span className="text-[9px] sm:text-[10px] font-tech text-cyan-400 bg-cyan-950/80 px-1.5 py-0.5 border border-cyan-500/40 rounded-sm">
                   SYSTEM AUTH // ROOT
                 </span>
               </h2>
-              <p className="font-tech text-xs text-slate-400">
+              <p className="font-tech text-[10px] sm:text-xs text-slate-400 truncate hidden xs:block">
                 Modify Hunter credentials, rank authorization, and biometric attributes
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors border border-transparent hover:border-slate-700"
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors border border-transparent hover:border-slate-700 shrink-0 touch-target flex items-center justify-center"
             title="Cancel"
           >
             <X className="w-5 h-5" />
@@ -325,10 +325,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         </div>
 
         {/* Live Profile Quick Preview Banner */}
-        <div className="px-5 py-3 bg-black/60 border-b border-cyan-500/20 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
+        <div className="px-3 sm:px-5 py-2.5 sm:py-3 bg-black/60 border-b border-cyan-500/20 flex flex-col xs:flex-row xs:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             {/* Avatar Visualizer */}
-            <div className="relative w-12 h-12 rounded-sm border border-cyan-400/60 overflow-hidden bg-slate-950 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(0,212,255,0.3)]">
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-sm border border-cyan-400/60 overflow-hidden bg-slate-950 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(0,212,255,0.3)]">
               {customPhoto ? (
                 <img
                   src={customPhoto}
@@ -337,23 +337,23 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   onError={() => setCustomPhoto('')}
                 />
               ) : (
-                <AvatarIcon className={`w-6 h-6 ${selectedPreset.textColor}`} />
+                <AvatarIcon className={`w-5 h-5 sm:w-6 sm:h-6 ${selectedPreset.textColor}`} />
               )}
-              <span className="absolute bottom-0 right-0 px-1 text-[9px] font-hud bg-black/90 text-cyan-300 font-bold border-t border-l border-cyan-500/40">
+              <span className="absolute bottom-0 right-0 px-1 text-[8px] sm:text-[9px] font-hud bg-black/90 text-cyan-300 font-bold border-t border-l border-cyan-500/40">
                 {rank}
               </span>
             </div>
 
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-hud text-base font-black text-white tracking-wide">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="font-hud text-sm sm:text-base font-black text-white tracking-wide truncate max-w-[140px] sm:max-w-none">
                   {name || 'Unknown Hunter'}
                 </span>
-                <span className="font-tech text-xs px-2 py-0.5 bg-violet-950/80 border border-violet-500/40 text-violet-300">
+                <span className="font-tech text-[10px] sm:text-xs px-1.5 py-0.5 bg-violet-950/80 border border-violet-500/40 text-violet-300 truncate">
                   {title}
                 </span>
               </div>
-              <div className="font-tech text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+              <div className="font-tech text-[10px] sm:text-xs text-slate-400 flex items-center gap-1.5 sm:gap-2 mt-0.5 flex-wrap">
                 <span className="text-cyan-400 font-semibold">{hunterClass}</span>
                 <span>•</span>
                 <span className="text-slate-400">ID: {hunterId}</span>
@@ -363,9 +363,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-start xs:self-auto shrink-0">
             <span
-              className={`font-hud text-xs px-2.5 py-1 border font-bold clip-hex-btn ${rankBadges[rank].bg} ${rankBadges[rank].border} ${rankBadges[rank].text} ${rankBadges[rank].glow}`}
+              className={`font-hud text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 border font-bold clip-hex-btn ${rankBadges[rank].bg} ${rankBadges[rank].border} ${rankBadges[rank].text} ${rankBadges[rank].glow}`}
             >
               {rank} RANK
             </span>
@@ -373,10 +373,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         </div>
 
         {/* Tab Selector Navigation */}
-        <div className="flex border-b border-cyan-500/20 bg-black/40 overflow-x-auto scrollbar-none">
+        <div className="flex border-b border-cyan-500/20 bg-black/40 overflow-x-auto mobile-scroll-container">
           <button
             onClick={() => setActiveTab('identity')}
-            className={`flex items-center gap-2 px-4 py-2.5 font-hud text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 font-hud text-[11px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 shrink-0 ${
               activeTab === 'identity'
                 ? 'border-cyan-400 text-cyan-300 bg-cyan-950/40'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -387,7 +387,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('rank')}
-            className={`flex items-center gap-2 px-4 py-2.5 font-hud text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 font-hud text-[11px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 shrink-0 ${
               activeTab === 'rank'
                 ? 'border-cyan-400 text-cyan-300 bg-cyan-950/40'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -398,7 +398,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('avatar')}
-            className={`flex items-center gap-2 px-4 py-2.5 font-hud text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 font-hud text-[11px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 shrink-0 ${
               activeTab === 'avatar'
                 ? 'border-cyan-400 text-cyan-300 bg-cyan-950/40'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -409,7 +409,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('stats')}
-            className={`flex items-center gap-2 px-4 py-2.5 font-hud text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 font-hud text-[11px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap border-b-2 shrink-0 ${
               activeTab === 'stats'
                 ? 'border-cyan-400 text-cyan-300 bg-cyan-950/40'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -421,7 +421,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         </div>
 
         {/* Tab Body Contents */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 sm:space-y-5">
           
           {/* TAB 1: IDENTITY & CREED */}
           {activeTab === 'identity' && (
@@ -990,28 +990,28 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   return (
                     <div
                       key={item.key}
-                      className="p-3 bg-black/60 border border-slate-800 flex items-center justify-between gap-3"
+                      className="p-2.5 sm:p-3 bg-black/60 border border-slate-800 flex flex-col xs:flex-row xs:items-center justify-between gap-2.5 sm:gap-3"
                     >
-                      <div className="flex items-center gap-2.5 min-w-[140px]">
-                        <div className={`p-1.5 bg-black border ${item.border} rounded-sm`}>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`p-1.5 bg-black border ${item.border} rounded-sm shrink-0`}>
                           <Icon className={`w-4 h-4 ${item.color}`} />
                         </div>
-                        <div>
-                          <span className="font-hud text-xs font-bold text-white block">
+                        <div className="min-w-0">
+                          <span className="font-hud text-xs font-bold text-white block truncate">
                             {item.label}
                           </span>
-                          <span className="font-tech text-[10px] text-slate-400">
+                          <span className="font-tech text-[10px] text-slate-400 block truncate">
                             {item.desc}
                           </span>
                         </div>
                       </div>
 
                       {/* Value controller */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 self-end xs:self-auto shrink-0">
                         <button
                           type="button"
                           onClick={() => handleStatChange(item.key, val - 1)}
-                          className="w-7 h-7 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-hud text-sm flex items-center justify-center transition-colors active:scale-95"
+                          className="w-8 h-8 sm:w-7 sm:h-7 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-hud text-sm flex items-center justify-center transition-colors active:scale-95 touch-target"
                         >
                           -
                         </button>
@@ -1020,12 +1020,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                           min={1}
                           value={val}
                           onChange={(e) => handleStatChange(item.key, parseInt(e.target.value) || 1)}
-                          className="w-16 bg-black border border-cyan-500/40 text-cyan-300 font-hud font-bold text-center py-1 text-sm focus:outline-none focus:border-cyan-400"
+                          className="w-16 bg-black border border-cyan-500/40 text-cyan-300 font-hud font-bold text-center py-1.5 sm:py-1 text-sm focus:outline-none focus:border-cyan-400"
                         />
                         <button
                           type="button"
                           onClick={() => handleStatChange(item.key, val + 1)}
-                          className="w-7 h-7 bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 font-hud text-sm flex items-center justify-center transition-colors active:scale-95"
+                          className="w-8 h-8 sm:w-7 sm:h-7 bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 font-hud text-sm flex items-center justify-center transition-colors active:scale-95 touch-target"
                         >
                           +
                         </button>
@@ -1039,11 +1039,11 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         </div>
 
         {/* Modal Action Controls */}
-        <div className="px-5 py-3.5 border-t border-cyan-500/30 bg-black/80 flex items-center justify-between gap-3 flex-wrap">
+        <div className="px-3 sm:px-5 py-3 border-t border-cyan-500/30 bg-black/80 flex flex-col-reverse xs:flex-row items-stretch xs:items-center justify-between gap-2.5">
           <button
             type="button"
             onClick={onReset}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-500 text-slate-400 hover:text-rose-300 font-tech text-xs uppercase tracking-wider transition-all"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-500 text-slate-400 hover:text-rose-300 font-tech text-xs uppercase tracking-wider transition-all touch-target"
             title="Revert back to default Hunter Jin data"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -1054,14 +1054,14 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-tech text-xs uppercase tracking-wider transition-colors"
+              className="flex-1 xs:flex-initial px-3 sm:px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-tech text-xs uppercase tracking-wider transition-colors touch-target"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSave}
-              className="flex items-center gap-1.5 px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_15px_#00D4FF] hover:shadow-[0_0_22px_#00D4FF] transition-all clip-hex-btn active:scale-95"
+              className="flex-1 xs:flex-initial flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_15px_#00D4FF] hover:shadow-[0_0_22px_#00D4FF] transition-all clip-hex-btn active:scale-95 touch-target"
             >
               <Check className="w-4 h-4" />
               Save & Synchronize
